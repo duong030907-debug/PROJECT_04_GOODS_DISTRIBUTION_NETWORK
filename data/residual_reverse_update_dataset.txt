@@ -1,0 +1,13 @@
+# =====================================================================
+# DATASET: ds_rev.txt (Special Dataset: Residual Reverse Update)
+# Purpose: Tests Edmonds-Karp / Ford-Fulkerson pushing flow back via residual reverse arcs
+# Format: u v capacity weight
+# Source: WH, Target: ST
+# =====================================================================
+
+WH A 20 2.0
+WH B 20 3.0
+A C 20 1.0
+B C 10 2.0
+B ST 15 4.0
+C ST 20 2.5

@@ -1,0 +1,12 @@
+# =====================================================================
+# DATASET: ds_flow0.txt (Special Dataset: Source-Sink Disconnected)
+# Purpose: Tests Max Flow = 0 when Source cannot reach Sink
+# Format: u v capacity weight
+# Source: WH, Target: ST
+# =====================================================================
+
+WH A 10 2.0
+A B 15 3.0
+B C 10 4.0
+# Note: ST is completely disconnected from the rest of the graph
+X ST 5 1.0

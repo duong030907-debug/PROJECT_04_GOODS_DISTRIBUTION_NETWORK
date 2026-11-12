@@ -1,0 +1,43 @@
+# =====================================================================
+# DATASET: logistics_main.txt (Main Dataset)
+# Requirements: >= 18 vertices, >= 30 arcs
+# Format: Source Vertex | Target Vertex | Capacity (int >= 0) | Weight (real >= 0)
+# Constraint: Directed graph, no self-loops, no simultaneous (u,v) and (v,u)
+# Source: WH, Target: ST
+# =====================================================================
+
+# Vertices count: 20, Arcs count: 34
+WH A 15 4.5
+WH B 20 3.0
+WH C 12 6.0
+A D 10 2.5
+A E 8 4.0
+B C 5 1.5
+B E 12 3.5
+B F 14 5.0
+C F 10 2.0
+D G 9 3.0
+E D 6 1.0
+E H 11 2.5
+F H 8 3.5
+F I 15 4.0
+G J 10 2.0
+H G 5 1.5
+H K 12 3.0
+I K 10 2.5
+I L 14 4.5
+J M 8 3.0
+K M 10 2.0
+K N 7 3.5
+L N 12 4.0
+L O 9 5.0
+M P 11 2.5
+N P 6 1.5
+N Q 10 3.0
+O Q 8 2.5
+P R 15 3.5
+Q R 10 2.0
+P ST 18 4.0
+Q ST 12 3.0
+R ST 20 2.5
+J O 4 6.5
