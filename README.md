@@ -19,6 +19,7 @@ Chương trình Java có **hai giao diện** dùng chung model/thuật toán, ch
 
 - JDK **17 trở lên** (khuyến nghị JDK 21).
 - Không dùng thư viện ngoài; chỉ dùng JDK chuẩn.
+- Các script `run.bat` / `run.ps1` tự dò JDK trong `PATH`, `JAVA_HOME`, `%USERPROFILE%\Java`, `%ProgramFiles%\Android\Android Studio\jbr`, ... Nếu vẫn báo thiếu `javac`, hãy đặt biến `JAVA_HOME` trỏ tới thư mục JDK.
 - Console hỗ trợ UTF-8 (chương trình in bằng tiếng Việt không dấu để an toàn trên mọi terminal).
 - GUI dùng `javax.swing` có sẵn trong JDK, không cần thư viện ngoài; cần môi trường có desktop (không headless).
 
@@ -54,6 +55,8 @@ java -cp bin Main --gui
 
 GUI mở 5 tab: **Dữ liệu**, **Chạy thuật toán**, **Kết quả / Kiểm chứng**, **Kiểm thử**, **Hướng dẫn**.
 Không cần thư viện ngoài; `javax.swing` có sẵn trong JDK.
+
+Cách nhanh nhất: mở thư mục project và **double-click `run-gui.bat`**. Script sẽ tự tìm JDK, biên dịch và mở cửa sổ GUI. Nếu cửa sổ không mở, chạy `run-gui.bat` từ Command Prompt để xem thông báo lỗi.
 
 ![GUI - tab Dữ liệu](docs/gui-data.png)
 
