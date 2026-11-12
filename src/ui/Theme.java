@@ -14,6 +14,8 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -453,6 +455,25 @@ public final class Theme {
         table.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         table.getTableHeader().setPreferredSize(new Dimension(0, 38));
         table.setDefaultRenderer(Object.class, new BodyRenderer());
+        installCellTooltips(table);
+    }
+
+    /** Cho phep xem day du noi dung o bi cat bang tooltip. */
+    private static void installCellTooltips(JTable table) {
+        table.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent event) {
+                int row = table.rowAtPoint(event.getPoint());
+                int column = table.columnAtPoint(event.getPoint());
+                if (row < 0 || column < 0) {
+                    table.setToolTipText(null);
+                    return;
+                }
+                Object value = table.getValueAt(row, column);
+                table.setToolTipText(value == null || value.toString().isBlank()
+                        ? null : value.toString());
+            }
+        });
     }
 
     public static void styleStatusColumn(JTable table, int columnIndex) {

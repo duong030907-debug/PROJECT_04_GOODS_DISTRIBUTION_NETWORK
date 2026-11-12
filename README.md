@@ -55,6 +55,8 @@ java -cp bin Main --gui
 
 GUI mở 5 tab: **Dữ liệu**, **Thuật toán**, **Kết quả & kiểm chứng**, **Kiểm thử**, **Hướng dẫn**.
 Giao diện dùng theme riêng: header gradient, card bo góc, accent indigo, bảng có trạng thái màu và font Segoe UI/Cascadia Mono.
+Tab **Hướng dẫn** có 4 trang đầy đủ: Bắt đầu, Thuật toán (pseudocode + độ phức tạp), Dataset & testcase, Project.
+Bảng có tooltip để xem đầy đủ nội dung bị cắt; tab Dữ liệu hiển thị toàn bộ metadata dataset và danh sách đỉnh.
 Không cần thư viện ngoài; `javax.swing` có sẵn trong JDK.
 
 Cách nhanh nhất: mở thư mục project và **double-click `run-gui.bat`**. Script sẽ tự tìm JDK, biên dịch và mở cửa sổ GUI. Nếu cửa sổ không mở, chạy `run-gui.bat` từ Command Prompt để xem thông báo lỗi.
@@ -64,6 +66,8 @@ Cách nhanh nhất: mở thư mục project và **double-click `run-gui.bat`**. 
 ![GUI - tab Kết quả / Flow](docs/gui-result-flow.png)
 
 ![GUI - tab Kiểm thử](docs/gui-tests.png)
+
+![GUI - tab Hướng dẫn](docs/gui-help.png)
 
 ### Windows (PowerShell)
 

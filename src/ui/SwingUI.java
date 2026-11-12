@@ -71,6 +71,8 @@ public final class SwingUI {
     private JFrame frame;
     private JLabel headerLabel;
     private JLabel statusLabel;
+    private JLabel datasetSummaryLabel;
+    private JLabel datasetVerticesLabel;
 
     private JComboBox<String> datasetCombo;
     private JComboBox<String> sourceCombo;
@@ -95,7 +97,6 @@ public final class SwingUI {
     private JTextArea dijkstraDetailArea;
     private JTextArea verifyArea;
     private JTextArea testDetailArea;
-    private JTextArea helpArea;
 
     private JLabel flowSummaryLabel;
     private JLabel dijkstraSummaryLabel;
@@ -104,6 +105,7 @@ public final class SwingUI {
     private JTabbedPane mainTabs;
     private JTabbedPane dataTabs;
     private JTabbedPane resultTabs;
+    private JTabbedPane helpTabs;
 
     public static void launch() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -290,6 +292,28 @@ public final class SwingUI {
         toolbar.add(datasetCombo);
         toolbar.add(loadSampleButton);
 
+        Theme.Card info = new Theme.Card(new BorderLayout(0, 4));
+        datasetSummaryLabel = new JLabel("Chưa nạp dataset");
+        datasetSummaryLabel.setFont(Theme.font(13, Font.BOLD));
+        datasetSummaryLabel.setForeground(Theme.TEXT);
+        datasetVerticesLabel = new JLabel(" ");
+        datasetVerticesLabel.setFont(Theme.font(12));
+        datasetVerticesLabel.setForeground(Theme.MUTED);
+        JLabel convention = new JLabel(
+                "Quy ước: capacity nguyên ≥ 0 · weight thực ≥ 0 · capacity = 0 là tuyến không khả dụng");
+        convention.setFont(Theme.font(11));
+        convention.setForeground(Theme.MUTED);
+        info.add(datasetSummaryLabel, BorderLayout.NORTH);
+        info.add(datasetVerticesLabel, BorderLayout.CENTER);
+        info.add(convention, BorderLayout.SOUTH);
+
+        JPanel headerArea = new JPanel();
+        headerArea.setOpaque(false);
+        headerArea.setLayout(new BoxLayout(headerArea, BoxLayout.Y_AXIS));
+        headerArea.add(toolbar);
+        headerArea.add(Box.createVerticalStrut(12));
+        headerArea.add(info);
+
         arcModel = tableModel("STT", "u", "v", "Capacity", "Weight", "Ghi chú");
         arcTable = new JTable(arcModel);
         configureTable(arcTable);
@@ -310,7 +334,7 @@ public final class SwingUI {
         content.setBorder(BorderFactory.createEmptyBorder(10, 12, 12, 12));
         content.add(dataTabs, BorderLayout.CENTER);
 
-        panel.add(toolbar, BorderLayout.NORTH);
+        panel.add(headerArea, BorderLayout.NORTH);
         panel.add(content, BorderLayout.CENTER);
         return panel;
     }
@@ -514,15 +538,36 @@ public final class SwingUI {
     }
 
     private JPanel buildHelpTab() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setBackground(Theme.BG);
         panel.setBorder(BorderFactory.createEmptyBorder(14, 4, 10, 4));
-        helpArea = textArea();
-        setAreaText(helpArea, helpText());
+
+        helpTabs = new JTabbedPane();
+        Theme.styleTabs(helpTabs);
+        helpTabs.addTab("Bắt đầu", helpPage(startHelpText()));
+        helpTabs.addTab("Thuật toán", helpPage(algorithmHelpText()));
+        helpTabs.addTab("Dataset & testcase", helpPage(datasetHelpText()));
+        helpTabs.addTab("Project", helpPage(projectHelpText()));
+
         Theme.Card card = new Theme.Card(new BorderLayout());
-        card.add(scroll(helpArea), BorderLayout.CENTER);
+        card.setBorder(BorderFactory.createEmptyBorder(10, 12, 12, 12));
+        card.add(helpTabs, BorderLayout.CENTER);
         panel.add(card, BorderLayout.CENTER);
         return panel;
+    }
+
+    private JPanel helpPage(String text) {
+        JPanel page = new JPanel(new BorderLayout());
+        page.setBackground(Theme.BG);
+        page.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        JTextArea area = textArea();
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        setAreaText(area, text);
+        Theme.Card card = new Theme.Card(new BorderLayout());
+        card.add(scroll(area), BorderLayout.CENTER);
+        page.add(card, BorderLayout.CENTER);
+        return page;
     }
 
     private static DefaultTableModel tableModel(String... columns) {
@@ -821,8 +866,18 @@ public final class SwingUI {
         setAreaText(capacityArea, "");
         setAreaText(weightArea, "");
         if (network == null) {
+            datasetSummaryLabel.setText("Chưa nạp dataset");
+            datasetVerticesLabel.setText("Hãy nạp file hoặc chọn dataset mẫu để bắt đầu.");
             return;
         }
+
+        datasetSummaryLabel.setText(String.format(
+                "%s   ·   file: %s   ·   V=%d   ·   E=%d   ·   zero-capacity=%d   ·   Source=%s   ·   Sink=%s",
+                network.getDatasetName(), network.getFileName(),
+                network.vertexCount(), network.arcCount(), network.zeroCapacityCount(),
+                network.getSourceName(), network.getSinkName()));
+        datasetVerticesLabel.setText("Đỉnh (" + network.vertexCount() + "): "
+                + String.join(", ", network.getVertices()));
 
         Graph graph = network.getGraph();
         int index = 1;
@@ -1152,70 +1207,400 @@ public final class SwingUI {
     // Tro giup
     // =====================================================================
 
-    private String helpText() {
+    private String startHelpText() {
         return """
-                HƯỚNG DẪN SỬ DỤNG GUI (javax.swing)
-                =====================================
+                HƯỚNG DẪN SỬ DỤNG GUI
+                =====================
 
-                1. TAB "DỮ LIỆU"
-                   - Nạp file dataset (.txt) hoặc chọn dataset mẫu.
-                   - Reload: nạp lại dataset hiện tại.
-                   - Clear: xóa dataset và kết quả cũ.
-                   - Xem danh sách cung, adjacency list, capacity matrix, weight matrix.
+                MỞ NHANH
+                --------
+                  run-gui.bat
+                  java -cp bin Main --gui
 
-                2. TAB "THUẬT TOÁN"
-                   - Chọn Source, Sink (cho Ford-Fulkerson) và Target (cho Dijkstra).
-                   - "Chạy Ford-Fulkerson": tìm max flow trên residual graph mới.
-                   - "Chạy Dijkstra": tìm đường ngắn nhất trên graph gốc.
-                   - "Chạy cả hai": chạy cả hai bài toán với cùng endpoint.
-                   - Source = Target hợp lệ với Dijkstra (cost = 0), nhưng KHÔNG hợp lệ
-                     cho Maximum Flow (Source phải khác Sink).
+                LUỒNG DEMO GỢI Ý
+                ----------------
+                  1. Tab "Dữ liệu": chọn dataset mẫu -> Nạp dataset mẫu.
+                  2. Tab "Thuật toán": chọn Source/Sink/Target -> Chạy cả hai.
+                  3. Tab "Kết quả & kiểm chứng": xem Flow, Residual, Dijkstra, Verify.
+                  4. Tab "Kiểm thử": Chạy tất cả testcase -> xem PASS/FAIL.
+                  5. Tab "Hướng dẫn": tra cứu định dạng, thuật toán, project.
 
-                3. TAB "KẾT QUẢ & KIỂM CHỨNG"
-                   - Max Flow / Flow: bảng capacity, flow, residual trên từng cung gốc.
-                   - Residual / Augmenting paths: path, bottleneck, cung ngược [R].
-                   - Dijkstra: Distance/Predecessor, path và total cost.
-                   - Verify / Phân tích: kiểm chứng flow và path, phân tích hai bài toán.
+                5 TAB CHÍNH
+                -----------
+                  1) DỮ LIỆU
+                     - Nạp file .txt hoặc dataset mẫu.
+                     - Reload nạp lại dataset hiện tại; Clear xóa dataset và kết quả.
+                     - Thông tin dataset: tên file, V, E, zero-capacity, Source, Sink,
+                       danh sách đỉnh.
+                     - Xem danh sách cung, adjacency list, capacity matrix, weight matrix.
+                     - Bảng có tooltip: rê chuột lên ô bị cắt để xem đầy đủ.
 
-                4. TAB "KIỂM THỬ"
-                   - Chọn một testcase hoặc chạy toàn bộ 9 testcase.
-                   - Bảng hiển thị Expected/Actual/Pass; chọn dòng để xem chi tiết.
+                  2) THUẬT TOÁN
+                     - Source dùng cho cả hai bài toán.
+                     - Sink dùng cho Ford-Fulkerson (Max Flow).
+                     - Target dùng cho Dijkstra.
+                     - "Chạy Ford-Fulkerson": residual graph mới mỗi lần.
+                     - "Chạy Dijkstra": chạy trên graph gốc.
+                     - "Chạy cả hai": chạy cả hai và hiển thị kết quả cạnh nhau.
+                     - Source = Target: Dijkstra hợp lệ (cost 0), Max Flow bị từ chối.
 
-                5. TAB "HƯỚNG DẪN"
-                   - Định dạng dataset và quy ước của project.
+                  3) KẾT QUẢ & KIỂM CHỨNG
+                     - Max Flow / Flow: bảng capacity, flow, residual trên cung gốc.
+                     - Residual / Augmenting paths: path, bottleneck, cung ngược [R],
+                       danh sách residual arc vật lý/ngược.
+                     - Dijkstra: Distance/Predecessor cho mọi đỉnh, path, total cost.
+                     - Verify / Phân tích: kiểm tra 0<=f<=c, bảo toàn luồng,
+                       Source outflow = Sink inflow, kiểm tra path và phân tích hai bài toán.
 
-                ĐỊNH DẠNG DATASET
-                -----------------
-                Mỗi dòng: u v capacity weight
-                  u, v      : tên đỉnh, không khoảng trắng (WH, A, ST, ...)
-                  capacity  : số nguyên >= 0
-                  weight    : số thực hữu hạn >= 0
-                Dòng bắt đầu bằng # là chú thích.
-                Không self-loop, không cung trùng, không dùng đồng thời (u,v) và (v,u).
-                capacity = 0 là tuyến không khả dụng (không truyền flow, Dijkstra bỏ qua).
+                  4) KIỂM THỬ
+                     - Chọn 1 trong 9 testcase hoặc chạy tất cả.
+                     - Bảng Expected/Actual/Kết quả; chọn dòng để xem chi tiết.
+                     - Testcase dùng dataset thật trong thư mục data/.
 
-                THUẬT TOÁN
-                ----------
-                Ford-Fulkerson (BFS/Edmonds-Karp):
-                  - Mỗi lần chạy tạo residual graph mới từ capacity gốc.
-                  - Lặp: tìm augmenting path bằng BFS, tính bottleneck, cập nhật
-                    residual thuận/ngược và flow trên cung vật lý.
-                  - Dừng khi không còn augmenting path; verify 0<=f<=c và bảo toàn luồng.
+                  5) HƯỚNG DẪN
+                     - Bắt đầu: luồng sử dụng và mapping Console.
+                     - Thuật toán: pseudocode, cập nhật residual, độ phức tạp.
+                     - Dataset & testcase: định dạng, danh sách dataset, TC01-TC09.
+                     - Project: thông tin môn học, chức năng, kiến trúc, AI.
 
-                Dijkstra:
-                  - Chạy trên graph gốc, chỉ dùng cung capacity > 0 và weight >= 0.
-                  - Tính dist từ Source đến mọi đỉnh reachable, lưu predecessor.
-                  - Target chỉ dùng để truy vết; không dùng residual/flow làm trọng số.
+                MAPPING GUI <-> CONSOLE
+                -----------------------
+                  Tab Dữ liệu              <-> Menu 2 - Quản lý dữ liệu
+                  Tab Thuật toán           <-> Menu 3 - Chạy Maximum Flow / Dijkstra
+                  Tab Kết quả & kiểm chứng <-> Menu 4 - Kết quả / Kiểm chứng
+                  Tab Kiểm thử             <-> Menu 5 - Kiểm thử (mục 1-3)
+                  Tab Hướng dẫn            <-> Menu 5 - Hướng dẫn / thông tin project
+
+                MENU
+                ----
+                  Tệp     : Nạp dataset (Ctrl+O), Thoát.
+                  Chạy    : Ford-Fulkerson, Dijkstra, Cả hai.
+                  Trợ giúp: Hướng dẫn sử dụng, Thông tin project.
 
                 CHẠY BẰNG DÒNG LỆNH
                 -------------------
-                  run-gui.bat                   # build + mở GUI
-                  java -cp bin Main --gui       # mở GUI này
-                  java -cp bin Main             # Console
-                  java -cp bin Main --selftest  # chạy 9 testcase
+                  run-gui.bat                   build + mở GUI
+                  java -cp bin Main --gui       mở GUI
+                  java -cp bin Main             Console
+                  java -cp bin Main --selftest  chạy 9 testcase
 
-                PROJECT 04 - GOODS DISTRIBUTION NETWORK
-                Môn: Lý thuyết đồ thị (CSC106400)
+                YÊU CẦU MÔI TRƯỜNG
+                -------------------
+                  JDK 17+ (khuyến nghị 21). GUI dùng javax.swing có sẵn trong JDK,
+                  không cần thư viện ngoài. Cần môi trường desktop (không headless).
+                """;
+    }
+
+    private String algorithmHelpText() {
+        return """
+                THUẬT TOÁN VÀ KIỂM CHỨNG
+                ========================
+
+                1. FORD-FULKERSON (BFS / EDMONDS-KARP)
+                --------------------------------------
+                Bài toán: tìm lượng hàng tối đa từ Source đến Sink.
+                Thuộc tính dùng: capacity (số nguyên >= 0).
+                Trạng thái làm việc: residual graph mới + flow = 0 cho mỗi lần chạy.
+
+                Ý tưởng:
+                  - residual capacity c_f(u,v) = c(u,v) - f(u,v) với cung vật lý.
+                  - Cung ngược (v,u) có residual capacity = f(u,v).
+                  - Lặp: tìm augmenting path từ Source đến Sink trên residual graph.
+                  - Bottleneck = residual capacity nhỏ nhất trên path.
+                  - Tăng flow thêm bottleneck dọc path.
+
+                Pseudocode:
+                  FORD_FULKERSON(G, s, t):
+                      residual <- copy capacity của G
+                      flow <- 0
+                      while BFS(residual, s, t) tìm được path P:
+                          b <- min residual capacity trên P
+                          for (u,v) in P:
+                              residual[u][v] -= b
+                              residual[v][u] += b
+                              if (u,v) là cung vật lý:
+                                  flow[u][v] += b
+                              else:  // cung ngược residual
+                                  flow[v][u] -= b
+                          maxFlow += b
+                      return maxFlow, flow, residual
+
+                Cập nhật cung thuận / cung ngược:
+                  - Cung thuận (u,v): residual giảm, flow tăng.
+                  - Cung ngược (u,v) (tức (v,u) vật lý): residual giảm,
+                    flow trên (v,u) giảm để "trả lại" flow đã đẩy trước đó.
+                  - Graph gốc không bao giờ bị sửa.
+
+                Độ phức tạp:
+                  - Ford-Fulkerson cơ bản: O(E * f) với f là max flow (capacity nguyên).
+                  - BFS (Edmonds-Karp): O(V * E^2), độc lập giá trị capacity.
+                  - Bộ nhớ: O(V^2 + E) với ma trận residual và danh sách cung.
+
+                Kết thúc và kiểm chứng:
+                  - Dừng khi BFS không còn đường từ Source đến Sink.
+                  - Kiểm tra 0 <= f(u,v) <= c(u,v).
+                  - Kiểm tra bảo toàn luồng tại mọi đỉnh trung gian.
+                  - Kiểm tra tổng flow ra Source = tổng flow vào Sink.
+                  - Nếu Source không tới được Sink: Max Flow = 0, đây là kết quả hợp lệ.
+
+                2. DIJKSTRA
+                -----------
+                Bài toán: tìm tuyến có tổng weight nhỏ nhất từ Source đến Target.
+                Thuộc tính dùng: weight (số thực >= 0).
+                Điều kiện: chỉ dùng cung capacity > 0; không dùng residual/flow.
+
+                Ý tưởng:
+                  - dist[Source] = 0, các đỉnh khác = vô cực.
+                  - Priority Queue chọn đỉnh có dist nhỏ nhất chưa chốt.
+                  - Relax: nếu dist[u] + w(u,v) < dist[v] thì cập nhật dist[v],
+                    predecessor[v] = u.
+                  - Tính dist cho tất cả đỉnh reachable; Target chỉ dùng truy vết.
+
+                Pseudocode:
+                  DIJKSTRA(G, s):
+                      for v in V: dist[v] <- INF; pred[v] <- -1
+                      dist[s] <- 0
+                      PQ <- {(0, s)}
+                      while PQ không rỗng:
+                          u <- đỉnh có dist nhỏ nhất
+                          if u đã chốt: continue
+                          chốt u
+                          for (u,v) in G.adj[u]:
+                              if capacity(u,v) <= 0: continue
+                              if dist[u] + w(u,v) < dist[v]:
+                                  dist[v] <- dist[u] + w(u,v)
+                                  pred[v] <- u
+                                  PQ.push((dist[v], v))
+                      return dist, pred
+
+                Truy vết:
+                  - Nếu dist[Target] = INF: trả về NO PATH, không tạo path giả.
+                  - Ngược từ Target theo pred đến Source, đảo ngược để được path.
+                  - Source = Target: cost = 0, path chỉ gồm Source.
+                  - Nếu phát hiện weight âm: INVALID FOR DIJKSTRA.
+
+                Độ phức tạp:
+                  - O((V + E) * log V) với priority queue.
+                  - Bộ nhớ O(V + E).
+
+                3. PHÂN BIỆT HAI BÀI TOÁN
+                -------------------------
+                  Tiêu chí        Ford-Fulkerson              Dijkstra
+                  Mục tiêu        Max flow                    Min tổng weight
+                  Thuộc tính      capacity                    weight
+                  Graph dùng      residual graph mới           graph gốc
+                  Kết quả         max flow + flow từng cung    dist/pred/path/cost
+                  Câu hỏi         Năng lực vận chuyển tối đa   Tuyến ngắn/chi phí thấp
+                  Không được suy diễn: shortest path không tạo ra max flow và ngược lại.
+                  Không dùng capacity/flow làm trọng số Dijkstra.
+
+                4. TRẠNG THÁI VÀ LỖI
+                --------------------
+                  SUCCESS                 Dijkstra tìm được đường.
+                  NO PATH                 Target không reachable qua cung capacity > 0.
+                  MAX FLOW REACHED        Không còn augmenting path.
+                  MAX FLOW = 0            Source không tới Sink (kết quả hợp lệ).
+                  INVALID FOR DIJKSTRA    Weight âm/không hữu hạn.
+                  INVALID ENDPOINTS       Source = Sink cho Max Flow.
+                  INVALID CAPACITY        capacity âm hoặc không nguyên.
+                  INVALID INPUT           File/menu/tên đỉnh không hợp lệ.
+                  NOT LOADED              Chưa nạp dataset.
+
+                5. KIỂM CHỨNG TRÊN GUI
+                ----------------------
+                  Tab "Kết quả & kiểm chứng" -> "Verify / Phân tích" hiển thị:
+                    - [1] 0 <= f(u,v) <= c(u,v)
+                    - [2] Bảo toàn luồng tại đỉnh trung gian
+                    - [3] Source outflow = Sink inflow
+                    - [1] Mọi bước path là cung capacity > 0
+                    - [2] Tổng weight trên path = Total Cost
+                """;
+    }
+
+    private String datasetHelpText() {
+        return """
+                ĐỊNH DẠNG DATASET VÀ TESTCASE
+                =============================
+
+                ĐỊNH DẠNG FILE
+                --------------
+                  Mỗi dòng: u v capacity weight
+                    u, v      : tên đỉnh, không chứa khoảng trắng (WH, A, ST, ...)
+                    capacity  : số nguyên >= 0
+                    weight    : số thực hữu hạn >= 0
+                  - Dòng bắt đầu bằng # là chú thích.
+                  - Dòng trống bị bỏ qua.
+                  - File dùng UTF-8.
+
+                VÍ DỤ
+                ------
+                  # Dataset mẫu
+                  WH A 10 3.0
+                  WH B 15 5.0
+                  A ST 8 2.5
+                  B ST 10 3.0
+
+                QUY ƯỚC VALIDATION
+                ------------------
+                  - Graph có hướng, đơn cung.
+                  - Không self-loop (u,u).
+                  - Không cung trùng (u,v).
+                  - Không dùng đồng thời (u,v) và (v,u) trong cùng dataset.
+                  - capacity phải là số nguyên >= 0.
+                  - weight phải là số thực hữu hạn >= 0.
+                  - capacity = 0 là tuyến không khả dụng:
+                      + Không truyền flow.
+                      + Dijkstra bỏ qua.
+                  - Source mặc định WH, Sink mặc định ST.
+                  - File sai bất kỳ quy ước nào sẽ bị từ chối toàn bộ;
+                    dataset hiện tại được giữ nguyên.
+
+                DATASET HỢP LỆ
+                --------------
+                  MAIN    main_dataset.txt
+                          V=20, E=34. Max flow WH->ST = 35.
+                          Dijkstra WH->ST = 20.5 (WH-B-E-H-K-M-P-ST).
+                  DEMO    demo_dataset.txt
+                          V=10, E=13. Max flow = 27.
+                          Dijkstra WH->ST = 7.5 (WH-A-C-ST).
+                  REV     residual_reverse_update_dataset.txt
+                          V=6, E=7. Max flow = 8.
+                          Bắt buộc dùng cung ngược: WH-C-B-A[R]-D-ST.
+                          Dijkstra WH->ST = 5.0.
+                  FLOW0   source_sink_disconnected_dataset.txt
+                          V=6, E=4. Max flow = 0, Dijkstra NO PATH.
+                  ZERO    zero_capacity_arc_dataset.txt
+                          V=5, E=5. Có cung capacity = 0.
+                          Max flow = 10; flow WH->B = 0; Dijkstra = 9.0.
+                  NOPATH  dijkstra_no_path_dataset.txt
+                          V=4, E=3. Dijkstra NO PATH; max flow = 0.
+
+                DATASET KHÔNG HỢP LỆ (dùng cho TC07)
+                ------------------------------------
+                  invalid_capacity_dataset.txt   capacity âm
+                  invalid_weight_dataset.txt     weight âm
+                  invalid_duplicate_dataset.txt  cung trùng
+                  invalid_reverse_dataset.txt    tồn tại (u,v) và (v,u)
+                  invalid_selfloop_dataset.txt   self-loop
+                  invalid_format_dataset.txt     sai số cột
+
+                9 TESTCASE BẮT BUỘC
+                -------------------
+                  TC01  Ford-Fulkerson trên MAIN
+                        Expected: max flow = 35, verify flow PASS.
+                  TC02  Residual reverse update trên REV
+                        Expected: max flow = 8, có dùng cung ngược [R].
+                  TC03  Source-Sink không reachable trên FLOW0
+                        Expected: max flow = 0, Dijkstra NO PATH.
+                  TC04  Cung capacity = 0 trên ZERO
+                        Expected: flow WH->B = 0, max flow = 10, Dijkstra = 9.0.
+                  TC05  Dijkstra bình thường trên DEMO
+                        Expected: WH-A-C-ST, cost = 7.5.
+                  TC06  Dijkstra NO PATH trên NOPATH
+                        Expected: NO PATH, không có path giả.
+                  TC07  Validation dataset không hợp lệ
+                        Expected: 6/6 file bị từ chối đúng loại lỗi.
+                  TC08  Source = Sink
+                        Expected: Max Flow bị từ chối;
+                        Dijkstra cost = 0, path chỉ gồm Source.
+                  TC09  Dijkstra MAIN và chiều ngược
+                        Expected: WH->ST cost 20.5; A->WH NO PATH.
+
+                CÁCH CHẠY
+                ----------
+                  - Tab "Kiểm thử": chọn testcase -> "Chạy test đã chọn".
+                  - Hoặc "Chạy tất cả testcase" -> xem bảng PASS/FAIL.
+                  - Hoặc dòng lệnh: java -cp bin Main --selftest
+                  - Chọn một dòng trong bảng để xem Expected/Actual/chi tiết.
+                """;
+    }
+
+    private String projectHelpText() {
+        return """
+                THÔNG TIN PROJECT
+                =================
+
+                TÊN PROJECT
+                -----------
+                  PROJECT 04 - GOODS DISTRIBUTION NETWORK
+                  Phân tích năng lực vận chuyển và tuyến giao hàng.
+
+                MÔN HỌC
+                -------
+                  Lý thuyết đồ thị - CSC106400
+                  Hình thức: Project cuối kỳ, thực hiện 4 tuần.
+
+                MỤC TIÊU
+                --------
+                  - Mô hình hóa mạng vận chuyển bằng graph có hướng.
+                  - Mỗi cung có capacity (số nguyên >= 0) và weight (số thực >= 0).
+                  - Tự cài đặt Ford-Fulkerson để tính max flow.
+                  - Tự cài đặt Dijkstra để tìm tuyến ngắn nhất trên graph gốc.
+                  - Hiển thị augmenting path, bottleneck, residual, flow.
+                  - Hiển thị Distance/Predecessor, path, total cost.
+                  - Thiết kế testcase cho residual reverse, max flow = 0,
+                    capacity = 0, NO PATH, dữ liệu không hợp lệ.
+                  - Xây dựng Console/GUI rõ ràng, chạy hoàn chỉnh, demo trực tiếp.
+
+                CHỨC NĂNG BẮT BUỘC
+                -------------------
+                  F01  Quản lý graph gốc: nạp/đổi dataset, xem đỉnh/cung,
+                       capacity/weight, adjacency/matrix.
+                  F02  Chạy Maximum Flow: Ford-Fulkerson trên residual graph mới.
+                  F03  Chạy Dijkstra: graph gốc, cung capacity > 0, weight >= 0.
+                  F04  Kết quả & kiểm chứng: flow/residual, dist/pred, path/cost,
+                       verify và phân tích hai bài toán.
+                  F05  Kiểm thử & hướng dẫn: 9 testcase, Expected/Actual/Pass,
+                       định dạng input, thông tin project, điều hướng/reset.
+
+                KIẾN TRÚC
+                ---------
+                  Main
+                   ├─ ui.UI           Console 5 màn hình
+                   ├─ ui.SwingUI      GUI javax.swing 5 tab
+                   ├─ ui.Theme        Theme màu/font/component
+                   ├─ utils.Utils     Controller Console, hiển thị, verify
+                   ├─ io.InputOuputManager  Parser + validation + catalog
+                   ├─ models.Arc      Cung (u,v,capacity,weight)
+                   ├─ models.Graph    Graph gốc
+                   ├─ models.ResidualGraph  residual + flow
+                   ├─ models.Network  Dataset + map tên đỉnh
+                   ├─ algorithm.FordFulkerson
+                   ├─ algorithm.Dijkstra
+                   └─ testing.TestRunner  9 testcase
+
+                DATASET
+                -------
+                  6 bộ hợp lệ: MAIN, DEMO, REV, FLOW0, ZERO, NOPATH.
+                  6 bộ không hợp lệ cho validation (TC07).
+
+                KẾT QUẢ NỔI BẬT
+                ---------------
+                  - MAIN: max flow 35, Dijkstra 20.5.
+                  - DEMO: max flow 27, Dijkstra 7.5.
+                  - REV: max flow 8, có residual reverse arc.
+                  - FLOW0/NOPATH: xử lý đúng max flow 0 và NO PATH.
+                  - ZERO: cung capacity 0 không truyền flow, Dijkstra bỏ qua.
+                  - Self-test: 9/9 PASS.
+
+                THÀNH VIÊN
+                ----------
+                  [Cập nhật họ tên - MSSV - phần việc - % đóng góp]
+                  [Cập nhật họ tên - MSSV - phần việc - % đóng góp]
+
+                SỬ DỤNG AI
+                ----------
+                  Có sử dụng AI có kiểm soát. Cần ghi rõ AI hỗ trợ gì,
+                  sinh viên tự làm gì, đã kiểm chứng/chỉnh sửa ra sao.
+                  Xem file AI_Prompt_Log kèm báo cáo.
+
+                GHI CHÚ
+                -------
+                  - Graph gốc chỉ lưu capacity/weight, không chứa flow.
+                  - ResidualGraph được tạo mới mỗi lần chạy Ford-Fulkerson.
+                  - Dijkstra không dùng residual/flow làm trọng số.
+                  - Không dùng thư viện ngoài để thay thuật toán bắt buộc.
+                  - Chạy self-test để có minh chứng 9/9 PASS.
                 """;
     }
 
