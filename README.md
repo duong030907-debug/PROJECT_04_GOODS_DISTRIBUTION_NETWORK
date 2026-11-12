@@ -3,13 +3,15 @@
 **Môn học:** Lý thuyết đồ thị (CSC106400)
 **Nội dung:** Phân tích năng lực vận chuyển và tuyến giao hàng bằng Ford-Fulkerson và Dijkstra.
 
-Chương trình Console bằng Java, chạy được từ một điểm vào duy nhất `Main`:
+Chương trình Java có **hai giao diện** dùng chung model/thuật toán, chạy từ một điểm vào duy nhất `Main`:
 
+- **Console**: 5 màn hình menu (bản bắt buộc theo đề).
+- **GUI Swing (`javax.swing`)**: 5 tab tương ứng, có bảng dữ liệu, chạy thuật toán, xem residual/verify và chạy testcase.
 - Đọc graph có hướng từ file: mỗi cung có **capacity** (số nguyên ≥ 0) và **weight** (số thực ≥ 0).
 - **Ford-Fulkerson** (BFS / Edmonds-Karp) chạy trên **residual graph mới** mỗi lần, không sửa graph gốc.
 - **Dijkstra** chạy trên **graph gốc**, chỉ dùng cung `capacity > 0`, tính Distance/Predecessor cho mọi đỉnh reachable.
 - Hiển thị augmenting path, bottleneck, residual graph, flow trên cung gốc, verify flow, shortest path.
-- 5 màn hình menu, 9 testcase tự động (Expected/Actual/Pass).
+- 9 testcase tự động (Expected/Actual/Pass).
 
 ---
 
@@ -18,6 +20,7 @@ Chương trình Console bằng Java, chạy được từ một điểm vào duy
 - JDK **17 trở lên** (khuyến nghị JDK 21).
 - Không dùng thư viện ngoài; chỉ dùng JDK chuẩn.
 - Console hỗ trợ UTF-8 (chương trình in bằng tiếng Việt không dấu để an toàn trên mọi terminal).
+- GUI dùng `javax.swing` có sẵn trong JDK, không cần thư viện ngoài; cần môi trường có desktop (không headless).
 
 Kiểm tra:
 
@@ -34,13 +37,29 @@ java -version
 
 ```bat
 run.bat
-```
-
-Chạy self-test:
-
-```bat
 run.bat --selftest
 ```
+
+### Giao diện Swing (GUI)
+
+```bat
+run-gui.bat
+```
+
+Hoặc gọi trực tiếp:
+
+```bat
+java -cp bin Main --gui
+```
+
+GUI mở 5 tab: **Dữ liệu**, **Chạy thuật toán**, **Kết quả / Kiểm chứng**, **Kiểm thử**, **Hướng dẫn**.
+Không cần thư viện ngoài; `javax.swing` có sẵn trong JDK.
+
+![GUI - tab Dữ liệu](docs/gui-data.png)
+
+![GUI - tab Kết quả / Flow](docs/gui-result-flow.png)
+
+![GUI - tab Kiểm thử](docs/gui-tests.png)
 
 ### Windows (PowerShell)
 
@@ -59,9 +78,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\run.ps1 --selftest
 ### Linux / macOS
 
 ```bash
-chmod +x run.sh
+chmod +x run.sh run-gui.sh
 ./run.sh
 ./run.sh --selftest
+./run-gui.sh
 ```
 
 ### Biên dịch / chạy thủ công
@@ -71,6 +91,7 @@ Windows PowerShell (đứng tại thư mục project):
 ```powershell
 javac --release 17 -encoding UTF-8 -d bin (Get-ChildItem src -Recurse -Filter *.java | ForEach-Object FullName)
 java -cp bin Main
+java -cp bin Main --gui
 java -cp bin Main --selftest
 ```
 
@@ -112,12 +133,14 @@ PROJECT_04_GOODS_DISTRIBUTION_NETWORK/
 │   ├── testing/
 │   │   └── TestRunner.java        # 9 testcase tự động
 │   ├── ui/
-│   │   └── UI.java                # 5 màn hình menu Console
+│   │   ├── UI.java                # 5 màn hình menu Console
+│   │   └── SwingUI.java           # GUI javax.swing (5 tab)
 │   └── utils/
 │       └── Utils.java             # Controller, hiển thị, verify
 ├── data/                          # Dataset chính + demo + đặc biệt + invalid
 ├── bin/                           # Class đã biên dịch (có thể xóa và build lại)
 ├── run.bat / run.ps1 / run.sh
+├── run-gui.bat / run-gui.ps1 / run-gui.sh
 └── README.md
 ```
 
@@ -204,6 +227,20 @@ MAIN MENU
 - Nhập sai không làm crash: chương trình thông báo và yêu cầu nhập lại.
 - Khi chưa nạp dữ liệu, các chức năng cần graph hiển thị **NOT LOADED**.
 - Đổi dataset/reload/clear sẽ **xóa residual và kết quả cũ** để tránh hiển thị dữ liệu cũ.
+
+### 6.1. Mapping GUI Swing ↔ Console
+
+GUI giữ đủ 5 nhóm chức năng, không thay thế bản Console:
+
+| Tab GUI | Tương đương Console | Chức năng |
+|---|---|---|
+| 1. Dữ liệu | Menu 2 | Nạp file/dataset mẫu, reload, clear, xem cung/adjacency/matrix |
+| 2. Chạy thuật toán | Menu 3 | Chọn Source/Sink/Target, chạy FF, Dijkstra, cả hai |
+| 3. Kết quả / Kiểm chứng | Menu 4 | Flow, residual, augmenting path, dist/pred, verify |
+| 4. Kiểm thử | Menu 5 | Chạy 1/all testcase, bảng Pass/Fail, chi tiết |
+| 5. Hướng dẫn | Menu 5 | Định dạng input, quy tắc thuật toán, thông tin project |
+
+Nút **"Xem kết quả"** ở tab 2 chuyển nhanh sang tab 3. Khi clear dataset, toàn bộ kết quả thuật toán cũ bị xóa.
 
 ---
 
