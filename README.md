@@ -53,7 +53,8 @@ Hoặc gọi trực tiếp:
 java -cp bin Main --gui
 ```
 
-GUI mở 5 tab: **Dữ liệu**, **Chạy thuật toán**, **Kết quả / Kiểm chứng**, **Kiểm thử**, **Hướng dẫn**.
+GUI mở 5 tab: **Dữ liệu**, **Thuật toán**, **Kết quả & kiểm chứng**, **Kiểm thử**, **Hướng dẫn**.
+Giao diện dùng theme riêng: header gradient, card bo góc, accent indigo, bảng có trạng thái màu và font Segoe UI/Cascadia Mono.
 Không cần thư viện ngoài; `javax.swing` có sẵn trong JDK.
 
 Cách nhanh nhất: mở thư mục project và **double-click `run-gui.bat`**. Script sẽ tự tìm JDK, biên dịch và mở cửa sổ GUI. Nếu cửa sổ không mở, chạy `run-gui.bat` từ Command Prompt để xem thông báo lỗi.
@@ -238,8 +239,8 @@ GUI giữ đủ 5 nhóm chức năng, không thay thế bản Console:
 | Tab GUI | Tương đương Console | Chức năng |
 |---|---|---|
 | 1. Dữ liệu | Menu 2 | Nạp file/dataset mẫu, reload, clear, xem cung/adjacency/matrix |
-| 2. Chạy thuật toán | Menu 3 | Chọn Source/Sink/Target, chạy FF, Dijkstra, cả hai |
-| 3. Kết quả / Kiểm chứng | Menu 4 | Flow, residual, augmenting path, dist/pred, verify |
+| 2. Thuật toán | Menu 3 | Chọn Source/Sink/Target, chạy FF, Dijkstra, cả hai |
+| 3. Kết quả & kiểm chứng | Menu 4 | Flow, residual, augmenting path, dist/pred, verify |
 | 4. Kiểm thử | Menu 5 | Chạy 1/all testcase, bảng Pass/Fail, chi tiết |
 | 5. Hướng dẫn | Menu 5 | Định dạng input, quy tắc thuật toán, thông tin project |
 

@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -110,10 +112,15 @@ public final class SwingUI {
             return;
         }
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ignore) {
-            // dung Look and Feel mac dinh neu he thong khong ho tro
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ignored) {
+                // dung Look and Feel mac dinh
+            }
         }
+        Theme.install();
         SwingUtilities.invokeLater(() -> new SwingUI().show());
     }
 
@@ -128,39 +135,80 @@ public final class SwingUI {
     // =====================================================================
 
     private void buildFrame() {
-        frame = new JFrame("PROJECT 04 - GOODS DISTRIBUTION NETWORK (Swing GUI)");
+        frame = new JFrame("Goods Distribution Network — Project 04");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(1040, 700));
-        frame.setSize(1180, 790);
+        frame.setMinimumSize(new Dimension(1120, 740));
+        frame.setSize(1240, 820);
         frame.setLocationRelativeTo(null);
+        frame.getContentPane().setBackground(Theme.BG);
         frame.setJMenuBar(buildMenuBar());
         frame.add(buildHeader(), BorderLayout.NORTH);
 
         mainTabs = new JTabbedPane();
-        mainTabs.addTab("1. Dữ liệu", buildDataTab());
-        mainTabs.addTab("2. Chạy thuật toán", buildAlgorithmTab());
-        mainTabs.addTab("3. Kết quả / Kiểm chứng", buildResultTab());
-        mainTabs.addTab("4. Kiểm thử", buildTestTab());
-        mainTabs.addTab("5. Hướng dẫn", buildHelpTab());
+        Theme.styleTabs(mainTabs);
+        mainTabs.addTab("Dữ liệu", buildDataTab());
+        mainTabs.addTab("Thuật toán", buildAlgorithmTab());
+        mainTabs.addTab("Kết quả & kiểm chứng", buildResultTab());
+        mainTabs.addTab("Kiểm thử", buildTestTab());
+        mainTabs.addTab("Hướng dẫn", buildHelpTab());
+        mainTabs.setBorder(new javax.swing.border.EmptyBorder(6, 18, 0, 18));
         frame.add(mainTabs, BorderLayout.CENTER);
-
-        statusLabel = new JLabel("Sẵn sàng.");
-        statusLabel.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-        frame.add(statusLabel, BorderLayout.SOUTH);
+        frame.add(buildStatusBar(), BorderLayout.SOUTH);
     }
 
     private JPanel buildHeader() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 12, 8, 12));
+        Theme.GradientHeader panel = new Theme.GradientHeader();
+        panel.setLayout(new BorderLayout(16, 0));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 24, 20, 24));
 
-        JLabel title = new JLabel("HỆ THỐNG PHÂN PHỐI HÀNG HÓA");
-        title.setFont(title.getFont().deriveFont(Font.BOLD, 17f));
-        headerLabel = new JLabel("Chưa nạp dataset");
-        headerLabel.setFont(headerLabel.getFont().deriveFont(Font.PLAIN, 13f));
+        JPanel text = new JPanel();
+        text.setOpaque(false);
+        text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
 
-        panel.add(title, BorderLayout.WEST);
-        panel.add(headerLabel, BorderLayout.EAST);
+        JLabel title = new JLabel("Goods Distribution Network");
+        title.setFont(Theme.font(22, Font.BOLD));
+        title.setForeground(Color.WHITE);
+
+        JLabel subtitle = new JLabel(
+                "Ford-Fulkerson · Dijkstra · Phân tích mạng phân phối hàng hóa");
+        subtitle.setFont(Theme.font(12));
+        subtitle.setForeground(new Color(0xC7D2FE));
+
+        text.add(title);
+        text.add(Box.createVerticalStrut(4));
+        text.add(subtitle);
+
+        headerLabel = new Theme.ChipLabel("Chưa nạp dataset");
+        JPanel chip = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        chip.setOpaque(false);
+        chip.add(headerLabel);
+
+        panel.add(text, BorderLayout.WEST);
+        panel.add(chip, BorderLayout.EAST);
         return panel;
+    }
+
+    private JPanel buildStatusBar() {
+        JPanel bar = new JPanel(new BorderLayout());
+        bar.setBackground(Theme.SURFACE);
+        bar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER),
+                new javax.swing.border.EmptyBorder(8, 18, 8, 18)));
+
+        JLabel dot = new JLabel("●");
+        dot.setForeground(Theme.SUCCESS);
+        dot.setFont(Theme.font(11));
+
+        statusLabel = new JLabel("Sẵn sàng.");
+        statusLabel.setFont(Theme.font(12));
+        statusLabel.setForeground(Theme.MUTED);
+
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        left.setOpaque(false);
+        left.add(dot);
+        left.add(statusLabel);
+        bar.add(left, BorderLayout.WEST);
+        return bar;
     }
 
     private JMenuBar buildMenuBar() {
@@ -207,169 +255,241 @@ public final class SwingUI {
         bar.add(fileMenu);
         bar.add(runMenu);
         bar.add(helpMenu);
+        Theme.styleMenuBar(bar);
         return bar;
     }
 
     private JPanel buildDataTab() {
-        JPanel panel = new JPanel(new BorderLayout(8, 8));
-        panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
+        panel.setBackground(Theme.BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(14, 4, 10, 4));
 
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
-        JButton openButton = new JButton("Nạp file...");
+        Theme.Card toolbar = new Theme.Card(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        JButton openButton = Theme.primaryButton("Nạp file...");
         openButton.addActionListener(e -> chooseFile());
-        JButton reloadButton = new JButton("Reload");
+        JButton reloadButton = Theme.secondaryButton("Reload");
         reloadButton.addActionListener(e -> reloadDataset());
-        JButton clearButton = new JButton("Clear");
+        JButton clearButton = Theme.dangerButton("Clear");
         clearButton.addActionListener(e -> clearDataset());
 
         datasetCombo = new JComboBox<>();
         for (InputOuputManager.DatasetInfo info : InputOuputManager.VALID_DATASETS) {
             datasetCombo.addItem(info.code() + " - " + info.label());
         }
-        JButton loadSampleButton = new JButton("Nạp dataset mẫu");
+        Theme.styleCombo(datasetCombo);
+        datasetCombo.setPreferredSize(new Dimension(360, 36));
+
+        JButton loadSampleButton = Theme.secondaryButton("Nạp dataset mẫu");
         loadSampleButton.addActionListener(e -> loadSelectedSample());
 
         toolbar.add(openButton);
         toolbar.add(reloadButton);
         toolbar.add(clearButton);
-        toolbar.add(new JLabel("   Dataset mẫu:"));
+        toolbar.add(Box.createHorizontalStrut(6));
+        toolbar.add(Theme.fieldLabel("DATASET MẪU"));
         toolbar.add(datasetCombo);
         toolbar.add(loadSampleButton);
 
         arcModel = tableModel("STT", "u", "v", "Capacity", "Weight", "Ghi chú");
         arcTable = new JTable(arcModel);
         configureTable(arcTable);
-        setColumnWidths(arcTable, 50, 80, 80, 90, 80, 120);
+        setColumnWidths(arcTable, 55, 90, 90, 100, 90, 140);
 
         adjacencyArea = textArea();
         capacityArea = textArea();
         weightArea = textArea();
 
         dataTabs = new JTabbedPane();
+        Theme.styleTabs(dataTabs);
         dataTabs.addTab("Danh sách cung", scroll(arcTable));
         dataTabs.addTab("Adjacency list", scroll(adjacencyArea));
         dataTabs.addTab("Capacity matrix", scroll(capacityArea));
         dataTabs.addTab("Weight matrix", scroll(weightArea));
 
+        Theme.Card content = new Theme.Card(new BorderLayout());
+        content.setBorder(BorderFactory.createEmptyBorder(10, 12, 12, 12));
+        content.add(dataTabs, BorderLayout.CENTER);
+
         panel.add(toolbar, BorderLayout.NORTH);
-        panel.add(dataTabs, BorderLayout.CENTER);
+        panel.add(content, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel buildAlgorithmTab() {
-        JPanel panel = new JPanel(new BorderLayout(8, 8));
-        panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
+        panel.setBackground(Theme.BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(14, 4, 10, 4));
 
-        JPanel controls = new JPanel();
-        controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+        Theme.Card controls = new Theme.Card(new BorderLayout(0, 12));
 
-        JPanel endpoints = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+        JPanel endpoints = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 4));
+        endpoints.setOpaque(false);
         sourceCombo = new JComboBox<>();
         sinkCombo = new JComboBox<>();
         targetCombo = new JComboBox<>();
-        endpoints.add(new JLabel("Source:"));
+        for (JComboBox<String> combo : List.of(sourceCombo, sinkCombo, targetCombo)) {
+            Theme.styleCombo(combo);
+            combo.setPreferredSize(new Dimension(130, 36));
+        }
+        endpoints.add(Theme.fieldLabel("SOURCE"));
         endpoints.add(sourceCombo);
-        endpoints.add(new JLabel("Sink (cho Max Flow):"));
+        endpoints.add(Theme.fieldLabel("SINK (MAX FLOW)"));
         endpoints.add(sinkCombo);
-        endpoints.add(new JLabel("Target (cho Dijkstra):"));
+        endpoints.add(Theme.fieldLabel("TARGET (DIJKSTRA)"));
         endpoints.add(targetCombo);
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
-        JButton ffButton = new JButton("Chạy Ford-Fulkerson");
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        buttons.setOpaque(false);
+        JButton ffButton = Theme.secondaryButton("Chạy Ford-Fulkerson");
         ffButton.addActionListener(e -> runFordFulkerson());
-        JButton djButton = new JButton("Chạy Dijkstra");
+        JButton djButton = Theme.secondaryButton("Chạy Dijkstra");
         djButton.addActionListener(e -> runDijkstra());
-        JButton bothButton = new JButton("Chạy cả hai");
+        JButton bothButton = Theme.primaryButton("Chạy cả hai");
         bothButton.addActionListener(e -> runBoth());
-        JButton resultButton = new JButton("Xem kết quả");
+        JButton resultButton = Theme.ghostButton("Xem kết quả  →");
         resultButton.addActionListener(e -> mainTabs.setSelectedIndex(2));
 
         buttons.add(ffButton);
         buttons.add(djButton);
         buttons.add(bothButton);
+        buttons.add(Box.createHorizontalStrut(4));
         buttons.add(resultButton);
 
         JLabel hint = new JLabel("Ford-Fulkerson dùng Source/Sink. Dijkstra dùng Source/Target "
                 + "(Source = Target hợp lệ, cost = 0).");
-        hint.setBorder(BorderFactory.createEmptyBorder(2, 10, 8, 10));
+        hint.setFont(Theme.font(12));
+        hint.setForeground(Theme.MUTED);
+        hint.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 
-        controls.add(endpoints);
-        controls.add(buttons);
-        controls.add(hint);
+        JPanel controlBody = new JPanel();
+        controlBody.setOpaque(false);
+        controlBody.setLayout(new BoxLayout(controlBody, BoxLayout.Y_AXIS));
+        controlBody.add(endpoints);
+        controlBody.add(buttons);
+        controlBody.add(Box.createVerticalStrut(8));
+        controlBody.add(hint);
+
+        controls.add(controlBody, BorderLayout.CENTER);
 
         algorithmArea = textArea();
+        Theme.Card output = new Theme.Card(new BorderLayout(0, 8));
+        output.add(Theme.sectionTitle("KẾT QUẢ CHẠY"), BorderLayout.NORTH);
+        output.add(scroll(algorithmArea), BorderLayout.CENTER);
+
         panel.add(controls, BorderLayout.NORTH);
-        panel.add(scroll(algorithmArea), BorderLayout.CENTER);
+        panel.add(output, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel buildResultTab() {
-        JPanel panel = new JPanel(new BorderLayout(4, 4));
-        panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        JPanel panel = new JPanel(new BorderLayout(0, 8));
+        panel.setBackground(Theme.BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(14, 4, 10, 4));
 
         resultTabs = new JTabbedPane();
+        Theme.styleTabs(resultTabs);
 
         flowModel = tableModel("STT", "u", "v", "Capacity", "Flow", "Residual", "Trạng thái");
         flowTable = new JTable(flowModel);
         configureTable(flowTable);
-        setColumnWidths(flowTable, 50, 80, 80, 100, 80, 100, 120);
+        setColumnWidths(flowTable, 55, 90, 90, 100, 85, 95, 130);
+        Theme.styleStatusColumn(flowTable, 6);
         flowSummaryLabel = new JLabel("Chưa chạy Ford-Fulkerson.");
-        JPanel flowPanel = new JPanel(new BorderLayout(4, 4));
-        flowPanel.add(flowSummaryLabel, BorderLayout.NORTH);
-        flowPanel.add(scroll(flowTable), BorderLayout.CENTER);
+        flowSummaryLabel.setFont(Theme.font(13, Font.BOLD));
+        flowSummaryLabel.setForeground(Theme.TEXT);
+        flowSummaryLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 8, 2));
+
+        JPanel flowPanel = new JPanel(new BorderLayout());
+        flowPanel.setBackground(Theme.BG);
+        flowPanel.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
+        Theme.Card flowCard = new Theme.Card(new BorderLayout(0, 6));
+        flowCard.add(flowSummaryLabel, BorderLayout.NORTH);
+        flowCard.add(scroll(flowTable), BorderLayout.CENTER);
+        flowPanel.add(flowCard, BorderLayout.CENTER);
         resultTabs.addTab("Max Flow / Flow", flowPanel);
 
         residualArea = textArea();
-        resultTabs.addTab("Residual / Augmenting paths", scroll(residualArea));
+        JPanel residualPanel = new JPanel(new BorderLayout());
+        residualPanel.setBackground(Theme.BG);
+        residualPanel.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
+        Theme.Card residualCard = new Theme.Card(new BorderLayout());
+        residualCard.add(scroll(residualArea), BorderLayout.CENTER);
+        residualPanel.add(residualCard, BorderLayout.CENTER);
+        resultTabs.addTab("Residual / Augmenting paths", residualPanel);
 
         distModel = tableModel("Đỉnh", "Distance", "Predecessor");
         distTable = new JTable(distModel);
         configureTable(distTable);
-        setColumnWidths(distTable, 140, 160, 160);
+        setColumnWidths(distTable, 150, 160, 160);
         dijkstraSummaryLabel = new JLabel("Chưa chạy Dijkstra.");
+        dijkstraSummaryLabel.setFont(Theme.font(13, Font.BOLD));
+        dijkstraSummaryLabel.setForeground(Theme.TEXT);
+        dijkstraSummaryLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 8, 2));
         dijkstraDetailArea = textArea();
-        JPanel distPanel = new JPanel(new BorderLayout(4, 4));
-        distPanel.add(dijkstraSummaryLabel, BorderLayout.NORTH);
+
+        JPanel distPanel = new JPanel(new BorderLayout());
+        distPanel.setBackground(Theme.BG);
+        distPanel.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
+        Theme.Card distCard = new Theme.Card(new BorderLayout(0, 6));
+        distCard.add(dijkstraSummaryLabel, BorderLayout.NORTH);
         JSplitPane djSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 scroll(distTable), scroll(dijkstraDetailArea));
         djSplit.setResizeWeight(0.45);
-        distPanel.add(djSplit, BorderLayout.CENTER);
+        djSplit.setDividerSize(8);
+        djSplit.setBorder(null);
+        djSplit.setBackground(Theme.BG);
+        distCard.add(djSplit, BorderLayout.CENTER);
+        distPanel.add(distCard, BorderLayout.CENTER);
         resultTabs.addTab("Dijkstra", distPanel);
 
         verifyArea = textArea();
-        resultTabs.addTab("Verify / Phân tích", scroll(verifyArea));
+        JPanel verifyPanel = new JPanel(new BorderLayout());
+        verifyPanel.setBackground(Theme.BG);
+        verifyPanel.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
+        Theme.Card verifyCard = new Theme.Card(new BorderLayout());
+        verifyCard.add(scroll(verifyArea), BorderLayout.CENTER);
+        verifyPanel.add(verifyCard, BorderLayout.CENTER);
+        resultTabs.addTab("Verify / Phân tích", verifyPanel);
 
         panel.add(resultTabs, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel buildTestTab() {
-        JPanel panel = new JPanel(new BorderLayout(6, 6));
-        panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
+        panel.setBackground(Theme.BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(14, 4, 10, 4));
 
-        JPanel top = new JPanel(new BorderLayout());
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
+        Theme.Card top = new Theme.Card(new BorderLayout(0, 8));
+        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        controls.setOpaque(false);
         testCombo = new JComboBox<>();
         for (TestRunner.TestInfo info : TestRunner.CATALOG) {
             testCombo.addItem(info.code() + " - " + info.title());
         }
-        JButton runOne = new JButton("Chạy test đã chọn");
+        Theme.styleCombo(testCombo);
+        testCombo.setPreferredSize(new Dimension(430, 36));
+        JButton runOne = Theme.secondaryButton("Chạy test đã chọn");
         runOne.addActionListener(e -> runSelectedTest());
-        JButton runAll = new JButton("Chạy tất cả testcase");
+        JButton runAll = Theme.primaryButton("Chạy tất cả testcase");
         runAll.addActionListener(e -> runAllTests());
-        controls.add(new JLabel("Testcase:"));
+        controls.add(Theme.fieldLabel("TESTCASE"));
         controls.add(testCombo);
         controls.add(runOne);
         controls.add(runAll);
 
         testSummaryLabel = new JLabel("Chưa chạy testcase.");
+        testSummaryLabel.setFont(Theme.font(13, Font.BOLD));
+        testSummaryLabel.setForeground(Theme.TEXT);
+        testSummaryLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
         top.add(controls, BorderLayout.NORTH);
         top.add(testSummaryLabel, BorderLayout.SOUTH);
 
         testModel = tableModel("Mã", "Tên testcase", "Expected", "Actual", "Kết quả");
         testTable = new JTable(testModel);
         configureTable(testTable);
-        setColumnWidths(testTable, 60, 320, 240, 240, 80);
+        setColumnWidths(testTable, 65, 340, 250, 250, 95);
+        Theme.styleStatusColumn(testTable, 4);
         testTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         testTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -381,18 +501,27 @@ public final class SwingUI {
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 scroll(testTable), scroll(testDetailArea));
         split.setResizeWeight(0.5);
+        split.setDividerSize(8);
+        split.setBorder(null);
+        split.setBackground(Theme.BG);
+
+        Theme.Card body = new Theme.Card(new BorderLayout());
+        body.add(split, BorderLayout.CENTER);
 
         panel.add(top, BorderLayout.NORTH);
-        panel.add(split, BorderLayout.CENTER);
+        panel.add(body, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel buildHelpTab() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        panel.setBackground(Theme.BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(14, 4, 10, 4));
         helpArea = textArea();
         setAreaText(helpArea, helpText());
-        panel.add(scroll(helpArea), BorderLayout.CENTER);
+        Theme.Card card = new Theme.Card(new BorderLayout());
+        card.add(scroll(helpArea), BorderLayout.CENTER);
+        panel.add(card, BorderLayout.CENTER);
         return panel;
     }
 
@@ -406,11 +535,7 @@ public final class SwingUI {
     }
 
     private static void configureTable(JTable table) {
-        table.setRowHeight(23);
-        table.setAutoCreateRowSorter(false);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setFillsViewportHeight(true);
+        Theme.styleTable(table);
     }
 
     private static void setColumnWidths(JTable table, int... widths) {
@@ -421,16 +546,12 @@ public final class SwingUI {
 
     private static JTextArea textArea() {
         JTextArea area = new JTextArea();
-        area.setEditable(false);
-        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
-        area.setMargin(new Insets(8, 8, 8, 8));
+        Theme.styleTextArea(area);
         return area;
     }
 
     private static JScrollPane scroll(java.awt.Component component) {
-        JScrollPane pane = new JScrollPane(component);
-        pane.setBorder(BorderFactory.createLineBorder(new java.awt.Color(210, 210, 210)));
-        return pane;
+        return Theme.scroll(component);
     }
 
     // =====================================================================
@@ -683,9 +804,14 @@ public final class SwingUI {
         if (network == null) {
             headerLabel.setText("Chưa nạp dataset");
         } else {
-            headerLabel.setText(String.format("%s  |  V=%d  E=%d  capacity=0: %d",
-                    network.getDatasetName(), network.vertexCount(),
-                    network.arcCount(), network.zeroCapacityCount()));
+            String name = network.getDatasetName();
+            if (name.length() > 22) {
+                name = name.substring(0, 20) + "…";
+            }
+            headerLabel.setText(String.format("%s   ·   V=%d   ·   E=%d   ·   c=0: %d",
+                    name, network.vertexCount(), network.arcCount(),
+                    network.zeroCapacityCount()));
+            headerLabel.revalidate();
         }
     }
 
@@ -1037,7 +1163,7 @@ public final class SwingUI {
                    - Clear: xóa dataset và kết quả cũ.
                    - Xem danh sách cung, adjacency list, capacity matrix, weight matrix.
 
-                2. TAB "CHẠY THUẬT TOÁN"
+                2. TAB "THUẬT TOÁN"
                    - Chọn Source, Sink (cho Ford-Fulkerson) và Target (cho Dijkstra).
                    - "Chạy Ford-Fulkerson": tìm max flow trên residual graph mới.
                    - "Chạy Dijkstra": tìm đường ngắn nhất trên graph gốc.
@@ -1045,7 +1171,7 @@ public final class SwingUI {
                    - Source = Target hợp lệ với Dijkstra (cost = 0), nhưng KHÔNG hợp lệ
                      cho Maximum Flow (Source phải khác Sink).
 
-                3. TAB "KẾT QUẢ / KIỂM CHỨNG"
+                3. TAB "KẾT QUẢ & KIỂM CHỨNG"
                    - Max Flow / Flow: bảng capacity, flow, residual trên từng cung gốc.
                    - Residual / Augmenting paths: path, bottleneck, cung ngược [R].
                    - Dijkstra: Distance/Predecessor, path và total cost.
@@ -1083,6 +1209,7 @@ public final class SwingUI {
 
                 CHẠY BẰNG DÒNG LỆNH
                 -------------------
+                  run-gui.bat                   # build + mở GUI
                   java -cp bin Main --gui       # mở GUI này
                   java -cp bin Main             # Console
                   java -cp bin Main --selftest  # chạy 9 testcase
@@ -1157,8 +1284,8 @@ public final class SwingUI {
 
     private void showErrors(String title, List<String> errors) {
         JTextArea area = new JTextArea(String.join("\n", errors));
-        area.setEditable(false);
-        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        Theme.styleTextArea(area);
+        area.setFont(Theme.mono(12));
         area.setRows(Math.min(12, Math.max(4, errors.size())));
         JScrollPane pane = new JScrollPane(area);
         pane.setPreferredSize(new Dimension(620, 220));
