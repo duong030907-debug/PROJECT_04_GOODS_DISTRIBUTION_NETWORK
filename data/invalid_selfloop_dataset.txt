@@ -1,0 +1,10 @@
+# =====================================================================
+# DATASET: invalid_selfloop_dataset.txt
+# Purpose: Dataset KHONG HOP LE - self-loop
+# Expected: loader tu choi voi loi INVALID INPUT (self-loop)
+# Format: u v capacity weight
+# =====================================================================
+
+WH A 10 2.0
+A A 5 1.0
+A ST 10 3.0

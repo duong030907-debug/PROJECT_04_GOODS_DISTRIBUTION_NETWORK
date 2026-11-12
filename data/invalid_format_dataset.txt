@@ -1,0 +1,9 @@
+# =====================================================================
+# DATASET: invalid_format_dataset.txt
+# Purpose: Dataset KHONG HOP LE - sai dinh dang (thieu cot / thua cot)
+# Expected: loader tu choi voi loi INVALID INPUT (dinh dang sai)
+# Format: u v capacity weight
+# =====================================================================
+
+WH A 10
+A ST 10 2.0 99

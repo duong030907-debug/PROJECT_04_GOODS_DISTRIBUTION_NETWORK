@@ -4,25 +4,37 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Do thi co huong don: moi cap dinh co toi da mot cung theo mot chieu.
+ *
+ * <p>Do thi goc chi luu capacity va weight. No khong bao gio bi thay doi boi
+ * Ford-Fulkerson; moi trang thai flow/residual nam trong {@link ResidualGraph}.</p>
+ */
 public class Graph {
 
     private final int n;
-    private int m = 0;
     private final boolean directed;
-    private final int[][] matrix;
-    private final List<List<Integer>> adj;
+    private final int[][] capMatrix;
+    private final double[][] weightMatrix;
+    private final boolean[][] present;
+    private final List<List<Arc>> adjArcs;
+    private final List<Arc> allArcs;
+    private int m;
+    private int zeroCapacityCount;
 
     public Graph(int n, boolean directed) {
-        this.directed = directed;
         if (n <= 0) {
-            throw new IllegalArgumentException("n phai lon hon 0");
-        } else {
-            this.n = n;
-            this.matrix = new int[n + 1][n + 1];
-            this.adj = new ArrayList<>(n + 1);
-            for (int i = 0; i <= n; i++) {
-                adj.add(new ArrayList<>());
-            }
+            throw new IllegalArgumentException("So dinh phai > 0");
+        }
+        this.n = n;
+        this.directed = directed;
+        this.capMatrix = new int[n + 1][n + 1];
+        this.weightMatrix = new double[n + 1][n + 1];
+        this.present = new boolean[n + 1][n + 1];
+        this.adjArcs = new ArrayList<>(n + 1);
+        this.allArcs = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            adjArcs.add(new ArrayList<>());
         }
     }
 
@@ -38,153 +50,96 @@ public class Graph {
         return directed;
     }
 
-    //region addEdge
-    public boolean addEdge(int u, int v) {
-        if (u <= 0 || v <= 0 || u > n || v > n) {
+    public int getCapacity(int u, int v) {
+        if (!valid(u) || !valid(v)) {
+            return 0;
+        }
+        return capMatrix[u][v];
+    }
+
+    public double getWeight(int u, int v) {
+        if (!valid(u) || !valid(v) || !present[u][v]) {
+            return -1.0;
+        }
+        return weightMatrix[u][v];
+    }
+
+    /** Cung vat ly (u,v) co ton tai trong do thi goc hay khong. */
+    public boolean hasArc(int u, int v) {
+        return valid(u) && valid(v) && present[u][v];
+    }
+
+    public Arc getArc(int u, int v) {
+        if (!hasArc(u, v)) {
+            return null;
+        }
+        for (Arc arc : adjArcs.get(u)) {
+            if (arc.getV() == v) {
+                return arc;
+            }
+        }
+        return null;
+    }
+
+    public boolean addArc(int u, int v, int capacity, double weight) {
+        if (!valid(u) || !valid(v) || u == v) {
             return false;
         }
-        if (isAdjacent(u, v)) {
+        if (present[u][v]) {
+            return false; // khong cho cung trung
+        }
+        if (capacity < 0 || weight < 0 || !Double.isFinite(weight)) {
             return false;
         }
 
-        if (directed) {
-            matrix[u][v] = 1;
-            addToListSorted(adj.get(u), v);
-        } else {
-            if (u == v) { 
-                if (matrix[u][v] == 1) return false;
-                matrix[u][v] = 1;
-                addToListSorted(adj.get(u), v);
-            } else {
-                matrix[u][v] = 1;
-                matrix[v][u] = 1;
-                addToListSorted(adj.get(u), v);
-                addToListSorted(adj.get(v), u);
-            }
-        }
+        capMatrix[u][v] = capacity;
+        weightMatrix[u][v] = weight;
+        present[u][v] = true;
+
+        Arc arc = new Arc(u, v, capacity, weight);
+        adjArcs.get(u).add(arc);
+        allArcs.add(arc);
         m++;
-        return true;
-    }
-
-    private void addToListSorted(List<Integer> list, int v) {
-        if (!list.contains(v)) {
-            list.add(v);
-            Collections.sort(list);
-        }
-    }
-    //endregion
-
-    //region removeEdge
-    public boolean removeEdge(int u, int v) {
-        if (u <= 0 || v <= 0 || u > n || v > n || matrix[u][v] == 0) {
-            return false;
+        if (capacity == 0) {
+            zeroCapacityCount++;
         }
 
-        if (directed) {
-            matrix[u][v] = 0;
-            adj.get(u).remove(Integer.valueOf(v));
-        } else {
-            matrix[u][v] = 0;
-            matrix[v][u] = 0;
-            adj.get(u).remove(Integer.valueOf(v));
-            adj.get(v).remove(Integer.valueOf(u));
-        }
-        m--;
-        return true;
-    }
-    //endregion
-
-    public boolean isAdjacent(int u, int v) {
-        if (u <= 0 || v <= 0 || u > n || v > n) {
-            throw new IllegalArgumentException("u va v phai trong khoảng [1, n]");
-        }
-        return matrix[u][v] == 1 && adj.get(u).contains(v);
-    }
-
-    public void printDegree() {
-        if (directed) {
-            System.out.printf("%-6s%-6s%-6s%-6s\n", "Dinh", "degIn", "degOut", "deg");
-            for (int i = 1; i <= n; i++) {
-                System.out.printf("%-6d%-6d%-6d%-6d\n", i, inDegree(i), outDegree(i), degree(i));
-            }
-        } else {
-            System.out.printf("%-6s%-6s\n", "Dinh", "deg");
-            for (int i = 1; i <= n; i++) {
-                System.out.printf("%-6d%-6d\n", i, degree(i));
-            }
-        }
-    }
-
-    public int degree(int v) {
-        if (v <= 0 || v > n) return 0;
-        if (directed) {
-            return outDegree(v) + inDegree(v);
-        } else {
-            return adj.get(v).size();
-        }
-    }
-
-    public int outDegree(int v) {
-        if (v <= 0 || v > n) return 0;
-        return adj.get(v).size();
-    }
-
-    public int inDegree(int v) {
-        if (v <= 0 || v > n) return 0;
-        int d = 0;
-        for (int i = 1; i <= n; i++) {
-            if (matrix[i][v] == 1) {
-                d++;
-            }
-        }
-        return d;
-    }
-
-    public void printMatrix() {
-        // Print header columns
-        System.out.printf("%-4s", " ");
-        for (int j = 1; j <= n; j++) {
-            System.out.printf("%-3d", j);
-        }
-        System.out.println();
-
-        // Print rows
-        for (int i = 1; i <= n; i++) {
-            System.out.printf("%-4d", i);
-            for (int j = 1; j <= n; j++) {
-                System.out.printf("%-3d", matrix[i][j]);
-            }
-            System.out.println();
-        }
-    }
-
-    public void printAdjList() {
-        System.out.printf("%-6s%-6s\n", "Dinh", "Ke");
-        for (int k = 1; k <= n; k++) {
-            List<Integer> neighbors = adj.get(k);
-            System.out.printf("%-6d", k);
-            for (int j : neighbors) {
-                System.out.printf("%-3d", j);
-            }
-            System.out.println();
-        }
-    }
-
-    public boolean checkConsistency() {
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                // Check matrix and adjacency list symmetry for undirected graphs
-                if (!directed && matrix[i][j] != matrix[j][i]) {
-                    return false;
-                }
-                // Check consistency between matrix and adjacency list
-                boolean inList = adj.get(i).contains(j);
-                boolean inMatrix = (matrix[i][j] == 1);
-                if (inMatrix != inList) {
-                    return false;
-                }
-            }
+        if (!directed) {
+            capMatrix[v][u] = capacity;
+            weightMatrix[v][u] = weight;
+            present[v][u] = true;
+            Arc reverse = new Arc(v, u, capacity, weight);
+            adjArcs.get(v).add(reverse);
+            allArcs.add(reverse);
         }
         return true;
+    }
+
+    public List<Arc> getOutgoingArcs(int u) {
+        if (!valid(u)) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(adjArcs.get(u));
+    }
+
+    public List<Arc> getAllArcs() {
+        return Collections.unmodifiableList(allArcs);
+    }
+
+    public int getZeroCapacityCount() {
+        return zeroCapacityCount;
+    }
+
+    public int outDegree(int u) {
+        return valid(u) ? adjArcs.get(u).size() : 0;
+    }
+
+    private boolean valid(int u) {
+        return u > 0 && u <= n;
+    }
+
+    public void printGraphSummary() {
+        System.out.println("Directed Graph | V = " + n + " | E = " + m
+                + " | Zero-capacity arcs = " + zeroCapacityCount);
     }
 }

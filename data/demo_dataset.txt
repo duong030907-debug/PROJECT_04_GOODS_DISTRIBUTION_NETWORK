@@ -1,10 +1,13 @@
 # =====================================================================
 # DATASET: ds_demo.txt (Demo Dataset)
-# Requirements: 6-10 vertices
+# Requirements: 10 vertices
 # Format: u v capacity weight
 # Source: WH, Target: ST
 # =====================================================================
 
+# Vertices: 10, Arcs: 13
+# Expected max flow = 27
+# Expected Dijkstra WH -> ST = 7.5 (WH -> A -> C -> ST)
 WH A 10 3.0
 WH B 15 5.0
 A C 8 2.0
@@ -13,3 +16,8 @@ B C 7 1.5
 B D 10 4.0
 C ST 12 2.5
 D ST 10 3.0
+WH E 5 6.0
+E F 5 3.0
+F G 5 3.0
+G H 5 2.0
+H ST 5 3.0

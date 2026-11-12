@@ -1,0 +1,10 @@
+# =====================================================================
+# DATASET: invalid_reverse_dataset.txt
+# Purpose: Dataset KHONG HOP LE - ton tai dong thoi (u,v) va (v,u)
+# Expected: loader tu choi theo quy uoc dataset cua project
+# Format: u v capacity weight
+# =====================================================================
+
+WH A 10 2.0
+A WH 5 1.0
+A ST 10 3.0

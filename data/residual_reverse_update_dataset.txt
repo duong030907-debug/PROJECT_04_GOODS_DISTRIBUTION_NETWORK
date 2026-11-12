@@ -1,13 +1,19 @@
 # =====================================================================
 # DATASET: ds_rev.txt (Special Dataset: Residual Reverse Update)
-# Purpose: Tests Edmonds-Karp / Ford-Fulkerson pushing flow back via residual reverse arcs
+# Purpose: Buoc Edmonds-Karp phai day flow nguoc tren residual reverse arc.
+#          Duong tang thu 3: WH -> C -> B -> A[R] -> D -> ST
+#          (A[R] la cung nguoc du cua cung vat ly A -> B).
 # Format: u v capacity weight
 # Source: WH, Target: ST
 # =====================================================================
 
-WH A 20 2.0
-WH B 20 3.0
-A C 20 1.0
-B C 10 2.0
-B ST 15 4.0
-C ST 20 2.5
+# Vertices: 6, Arcs: 7
+# Expected max flow = 8
+# Expected Dijkstra WH -> ST = 5.0 (WH -> A -> D -> ST)
+WH A 6 2.0
+A B 8 1.0
+WH C 2 3.0
+A D 4 1.0
+C B 8 2.0
+B ST 5 2.5
+D ST 8 2.0

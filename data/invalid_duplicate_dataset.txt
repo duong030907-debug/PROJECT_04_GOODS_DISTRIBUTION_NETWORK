@@ -1,0 +1,10 @@
+# =====================================================================
+# DATASET: invalid_duplicate_dataset.txt
+# Purpose: Dataset KHONG HOP LE - cung (u,v) bi lap
+# Expected: loader tu choi voi loi INVALID INPUT (cung trung)
+# Format: u v capacity weight
+# =====================================================================
+
+WH A 10 2.0
+WH A 5 1.0
+A ST 10 3.0

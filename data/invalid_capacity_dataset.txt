@@ -1,0 +1,9 @@
+# =====================================================================
+# DATASET: invalid_capacity_dataset.txt
+# Purpose: Dataset KHONG HOP LE - capacity am
+# Expected: loader tu choi voi loi INVALID CAPACITY
+# Format: u v capacity weight
+# =====================================================================
+
+WH A -5 2.0
+A ST 10 1.0
