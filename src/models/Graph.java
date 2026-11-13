@@ -20,7 +20,7 @@ public class Graph {
         zeroCapacityCount = 0;
     }
 	
-    public void addEdge(String u, String v, int capacity, double weight) {
+    public void addEdge(String u, String v, int capacity, int weight) {
         vertices.add(u);
         vertices.add(v);
         adjList.putIfAbsent(u, new ArrayList<>());
@@ -60,7 +60,7 @@ public class Graph {
 		return b;
 	}
 
-	public static Set<String> getVertices() {
+	public Set<String> getVertices() {
 		return vertices;
 	}
 
