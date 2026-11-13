@@ -37,6 +37,7 @@ public class IO {
                     }
 
                     graph.addEdge(u, v, cap, weight);
+                    System.out.println("LOADING");
                 }
             }
             

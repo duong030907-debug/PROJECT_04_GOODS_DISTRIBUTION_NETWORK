@@ -1,1 +1,3 @@
-S A -5 2.0
+# Invalid Dataset (Negative capacity)
+S A -5 2
+A T 10 3
