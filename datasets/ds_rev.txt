@@ -1,0 +1,6 @@
+# Reverse Residual Update Dataset
+S A 10 2.0
+A B 5 1.0
+B T 10 3.0
+S B 5 6.0
+A T 5 6.0

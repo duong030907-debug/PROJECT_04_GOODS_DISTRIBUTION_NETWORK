@@ -1,0 +1,5 @@
+# Zero-Capacity Arc Dataset
+S A 0 1.0
+A T 10 1.0
+S B 5 4.0
+B T 5 4.0
