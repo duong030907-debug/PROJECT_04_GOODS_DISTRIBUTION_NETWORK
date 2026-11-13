@@ -1,5 +1,5 @@
 # Disconnected Source-Sink Dataset (Max Flow = 0)
-S A 10 2.0
-A B 8 3.0
-C D 10 2.0
-D T 12 1.5
+S A 10 2
+A B 8 3
+C D 10 2
+D T 12 1
