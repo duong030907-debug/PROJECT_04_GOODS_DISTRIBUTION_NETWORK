@@ -1,10 +1,14 @@
 package utils;
 
-import models.Graph;
+import java.util.List;
 
-public class Utils {
+import com.google.common.graph.ValueGraph;
+
+
+
+
+public class  Utils{
 	
-	public Graph g;
 	
 
 	public void setData() {

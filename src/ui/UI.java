@@ -93,14 +93,15 @@ public class UI {
 				utils.chooseDatasetAndDebug();
 			}
 			case 4 -> {
-				while (j != 0) {
+				int a = -1;
+				while (a != 0) {
 					System.out.println("""
 							[4] Reload hoac Clear dataset hien tai
 							\t [1] Reload dataset
 							\t [2] Clear dataset
 							\t [0] Quay lai Main Menu
 							""");
-					int a = in.nextInt();
+					a = in.nextInt();
 					if (!in.hasNextInt() || !(a == 1 || a == 2)) {
 						System.out.println("""
 								Input khong hop le""");
