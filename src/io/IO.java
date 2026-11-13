@@ -35,7 +35,7 @@ public class IO {
                     if (cap < 0 || weight < 0) {
                         throw new IllegalArgumentException("Capacity and weight must be non-negative.");
                     }
-
+                    graph.setDatasetName(datasetName);
                     graph.addEdge(u, v, cap, weight);
                 }
             }
