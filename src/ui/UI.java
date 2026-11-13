@@ -1,24 +1,29 @@
 package ui;
 
-import java.io.IOException;
 import java.util.Scanner;
 
-import io.IO;
+import models.Graph;
 import utils.Utils;
 
 public class UI {
 	public static Scanner scanner = new Scanner(System.in);
 	public static Utils utils = new Utils();
+	public static Graph graph = utils.getGraph();
 
 	public static void mainMenu() {
 		while (true) {
-			System.out.println("""
+			String datasetName = (graph != null && graph.getDatasetName() != null) ? graph.getDatasetName() : "None";
+			int vertexCount = (graph != null && graph.getVertices() != null) ? graph.getVertices().size() : 0;
+			int edgeCount = (graph != null) ? graph.getEdgeCount() : 0;
+			int zeroCapCount = (graph != null) ? graph.getZeroCapacityCount() : 0;
+
+			System.out.printf("""
 					+================================================================+
-					|  					GOODS DISTRIBUTION NETWORK        			 |
+					|                   GOODS DISTRIBUTION NETWORK                   |
 					+================================================================+
-					| Dataset : logistics_mascanner.txt                                   |
-					| Graph : Directed | Capacity(int >=0) + Weight(real >=0)     	 |
-					| V = 20 | E = 34 | Zero-capacity arcs = 2                       |
+					| Dataset : %-52s |
+					| Graph   : Directed | Capacity(int >=0) + Weight(real >=0)      |
+					| V = %-3d | E = %-3d | Zero-capacity arcs = %-21d |
 					|                                                                |
 					| [1] Quan ly du lieu mang van chuyen                            |
 					| [2] Chay Maximum Flow / Dijkstra                               |
@@ -26,7 +31,7 @@ public class UI {
 					| [4] Kiem thu / Huong dan                                       |
 					| [0] Thoat chuong trinh                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang: """);
+					Chon chuc nang [0-4]: """, datasetName, vertexCount, edgeCount, zeroCapCount);
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
@@ -55,11 +60,12 @@ public class UI {
 
 	public static void menu2() {
 		while (true) {
-			System.out.println("""
+			String datasetName = (graph != null && graph.getDatasetName() != null) ? graph.getDatasetName() : "None";
+			System.out.printf("""
 					+================================================================+
 					|                 QUAN LY DU LIEU MANG VAN CHUYEN                |
 					+================================================================+
-					| Dataset : logistics_mascanner.txt                                   |
+					| Dataset : %-52s |
 					|                                                                |
 					| [1] Nap du lieu tu file                                        |
 					| [2] Xem tong hop graph goc + capacity/weight                   |
@@ -67,7 +73,7 @@ public class UI {
 					| [4] Reload hoac Clear dataset hien tai                         |
 					| [0] Quay lai Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang: """);
+					Chon chuc nang: """, datasetName);
 
 			String i = scanner.nextLine().trim();
 			switch (i) {
@@ -96,8 +102,8 @@ public class UI {
 				utils.displayGraph();
 			}
 			case "3" -> {
-				System.out.println("[3] Chon dataset mau / kiem thu ");
-				utils.chooseDatasetAndDebug();
+				System.out.println(" 3 Chon dataset mau / kiem thu ");
+				chooseDatasetAndDebug();
 			}
 			case "4" -> {
 				while (true) {
@@ -108,7 +114,7 @@ public class UI {
 							\t [0] Quay lai Main Menu
 							""");
 					String a = scanner.nextLine().trim();
-					if ((a == "1" || a == "2")) {
+					if (!(a == "1" || a == "2")) {
 						System.out.println("""
 								Input khong hop le""");
 						continue;
@@ -129,18 +135,19 @@ public class UI {
 
 	public static void menu3() {
 		while (true) {
-			System.out.println("""
+			String datasetName = (graph != null && graph.getDatasetName() != null) ? graph.getDatasetName() : "None";
+			System.out.printf("""
 					+================================================================+
 					|                  CHAY MAXIMUM FLOW / DIJKSTRA                  |
 					+================================================================+
-					| Dataset : logistics_mascanner.txt                                   |
+					| Dataset : %-52s |
 					|                                                                |
-					| [1] Ford-Fulkerson - chon Source/Sink va chay                 |
-					| [2] Dijkstra - chon Source/Target va chay tren graph goc      |
-					| [3] Chay ca hai bai toan tren cung graph goc                  |
+					| [1] Ford-Fulkerson - chon Source/Sink va chay                  |
+					| [2] Dijkstra - chon Source/Target va chay tren graph goc       |
+					| [3] Chay ca hai bai toan tren cung graph goc                   |
 					| [0] Quay lai Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang: """);
+					Chon chuc nang: """, datasetName);
 			if (!scanner.hasNextInt()) {
 				System.out.println("""
 						Input khong hop le""");
@@ -150,18 +157,43 @@ public class UI {
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("[1] Ford-Fulkerson - chon Source/Sink va chay");
-				utils.fordFulkerson();
+				System.out.print("Enter Source vertex: ");
+				utils.currentSourceFF = scanner.nextLine().trim();
+				System.out.print("Enter Sink vertex: ");
+				utils.currentSinkFF = scanner.nextLine().trim();
+				try {
+					utils.fordFulkerson();
+					System.out.println("[SUCCESS] Ford-Fulkerson completed. Max Flow = " + utils.lastMaxFlow);
+				} catch (Exception e) {
+					System.out.println("[ERROR] " + e.getMessage());
+				}
 			}
 			case "2" -> {
-				System.out.println("[2] Dijkstra - chon Source/Target va chay tren graph goc");
-				String u = scanner.nextLine().trim();
-				String v = scanner.nextLine().trim();
-				utils.dijkstra(u, v);
+				System.out.print("Enter Source vertex: ");
+				utils.currentSourceDJ = scanner.nextLine().trim();
+				System.out.print("Enter Target vertex: ");
+				utils.currentTargetDJ = scanner.nextLine().trim();
+				 try {
+					 utils.dijkstra(utils.currentSourceDJ,utils.currentTargetDJ);
+					 
+				}catch (Exception e) {
+                    System.out.println("[ERROR] " + e.getMessage());
+				}
 			}
-			case "3" -> {
-				System.out.println("[3] Chay ca hai bai toan tren cung graph goc");
-				utils.runFordFulkersonAndDijkstra();
+			case "3" -> {System.out.print("Enter Source vertex for both: ");
+            String s = scanner.nextLine().trim();
+            System.out.print("Enter Sink/Target vertex for both: ");
+            String t = scanner.nextLine().trim();
+            utils.currentSourceFF = s; utils.currentSinkFF = t;
+            utils.currentSourceDJ = s; utils.currentTargetDJ = t;
+            try {
+				utils.fordFulkerson();
+            	utils.dijkstra(s, t);
+                System.out.println("[SUCCESS] Both algorithms executed successfully.");
+            } catch (Exception e) {
+                System.out.println("[ERROR] " + e.getMessage());
+            }
+            break;
 			}
 			case "0" -> {
 				return;
@@ -175,11 +207,12 @@ public class UI {
 
 	public static void menu4() {
 		while (true) {
-			System.out.println("""
+			String datasetName = (graph != null && graph.getDatasetName() != null) ? graph.getDatasetName() : "None";
+			System.out.printf("""
 					+================================================================+
 					|                     KET QUA / KIEM CHUNG                       |
 					+================================================================+
-					| Dataset : logistics_mascanner.txt                                   |
+					| Dataset : %-52s |
 					|                                                                |
 					| [1] Xem Max Flow va flow tren cung goc                         |
 					| [2] Xem Residual Graph / augmenting paths / bottleneck         |
@@ -187,7 +220,7 @@ public class UI {
 					| [4] Verify Flow va phan tich tong hop hai bai toan             |
 					| [0] Quay lai Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang:""");
+					Chon chuc nang:""", datasetName);
 			if (!scanner.hasNextInt()) {
 				System.out.println("""
 						Input khong hop le""");
@@ -197,17 +230,18 @@ public class UI {
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("[1] Xem Max Flow va flow tren cung goc ");
 				utils.getMaxFlowAndTopFlow();
 			}
 			case "2" -> {
-				System.out.println("[2] Xem Residual Graph / augmenting paths / bottleneck ");
 				utils.displayResidualGraph();
 			}
 			case "3" -> {
-				System.out.println("[4] Verify Flow va phan tich tong hop hai bai toan ");
+				utils.xemDjaktra();
+			}
+			case "4" -> {
 				utils.verifyFlowAndExamine();
 			}
+			
 			case "0" -> {
 				return;
 			}
@@ -220,34 +254,36 @@ public class UI {
 
 	public static void menu5() {
 		while (true) {
-			System.out.println("""
-					MENU 5 - KIEM THU / HUONG DAN
-					[1] Chay mot testcase
-					[2] Chay tat ca testcase
-					[3] Xem tong hop Pass / Fail
-					[4] Dinh dang input / Huong dan thuat toan
-					[5] Thong tin project / thanh vien
-					[0] Quay lai Main Menu""");
+			String datasetName = (graph != null && graph.getDatasetName() != null) ? graph.getDatasetName() : "None";
+			System.out.printf("""
+					+================================================================+
+					|                 MENU 5 - KIEM THU / HUONG DAN                  |
+					+================================================================+
+					| Dataset : %-52s |
+					|                                                                |
+					| [1] Chay mot testcase                                          |
+					| [2] Chay tat ca testcase                                       |
+					| [3] Xem tong hop Pass / Fail                                   |
+					| [4] Dinh dang input / Huong dan thuat toan                     |
+					| [5] Thong tin project / thanh vien                             |
+					| [0] Quay lai Main Menu                                         |
+					+----------------------------------------------------------------+
+					Chon chuc nang [0-5]: """, datasetName);
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("[1] Xem Max Flow va flow tren cung goc ");
 				utils.runTestCase();
 			}
 			case "2" -> {
-				System.out.println("[2] Xem Residual Graph / augmenting paths / bottleneck ");
 				utils.runTestAllCase();
 			}
 			case "3" -> {
-				System.out.println("[4] Verify Flow va phan tich tong hop hai bai toan ");
 				utils.displayPassFail();
 			}
 			case "4" -> {
-				System.out.println("[4] Verify Flow va phan tich tong hop hai bai toan ");
 				utils.configAndHelper();
 			}
 			case "5" -> {
-				System.out.println("[4] Verify Flow va phan tich tong hop hai bai toan ");
 				utils.displayProjectInfo();
 			}
 			case "0" -> {
@@ -259,4 +295,41 @@ public class UI {
 			}
 		}
 	}
+
+	public static void chooseDatasetAndDebug() {
+		String[] datasets = { "logistics_main.txt", "flow_demo.txt", "ds_rev.txt", "ds_flow0.txt", "ds_zero.txt",
+				"ds_nopath.txt" };
+		// Hiển thị danh sách ra màn hình
+		for (int i = 0; i < datasets.length; i++) {
+			System.out.printf("[%d] %s\n", (i + 1), datasets[i]);
+		}
+		System.out.println("[0] Quay lai");
+		System.out.print("Chon file [0-" + datasets.length + "]: ");
+
+		String choiceStr = scanner.nextLine().trim();
+		try {
+			int choice = Integer.parseInt(choiceStr);
+			if (choice == 0) {
+				return;
+			}
+			if (choice > 0 && choice <= datasets.length) {
+				String filePath = datasets[choice - 1];
+
+				// Nạp dữ liệu vào graph
+				utils.setData(filePath);
+				utils.resetResults();
+				System.out.println("[OK] Nap thanh cong dataset: " + graph.getDatasetName());
+				System.out.println("[OK] Tong so dinh (V) = " + graph.getVertices().size() + " | Tong so cung (E) = "
+						+ graph.getEdgeCount());
+			} else {
+				System.out.println("[ERROR] Lua chon khong hop le.");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("[ERROR] Vui long nhap mot so nguyen.");
+		} catch (Exception e) {
+			System.out.println("[ERROR] Loi khi doc file: " + e.getMessage());
+		}
+
+	}
+	
 }
