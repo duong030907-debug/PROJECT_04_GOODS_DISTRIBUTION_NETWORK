@@ -63,9 +63,9 @@ public class Dijkstra {
                     if (weight < 0) {
                         throw new IllegalArgumentException("INVALID FOR DIJKSTRA: Negative weight detected.");
                     }
-                    //
+                    //newDist = cũ + weight mới
                     double newDist = distances.get(u) + weight;
-                    // nếu nhỏ hơn distances của v thì thêm
+                    // nếu nhỏ hơn distances của v
                     if (newDist < distances.get(v)) {
                         distances.put(v, newDist);
                         predecessors.put(v, u);
@@ -79,13 +79,16 @@ public class Dijkstra {
             success = true;
         }
     }
+    
+    // lấy đường
     public List<String> getPath(String target) {
         List<String> path = new ArrayList<>();
         // trả về rỗng nếu chưa chạy và không chứa u target
         if (!success && !distances.containsKey(target)) return path;
-        // nếu chứa
+        // nếu map trước chứa curr !- null thì 
         String curr = target;
         while (curr != null && predecessors.containsKey(curr)) {
+        	//thêm vô path
             path.add(0, curr);
             curr = predecessors.get(curr);
         }

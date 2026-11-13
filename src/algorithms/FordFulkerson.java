@@ -47,10 +47,10 @@ public class FordFulkerson {
 
 	public int run(String source, String sink) {
 		if (!originalGraph.getVertices().contains(source) || !originalGraph.getVertices().contains(sink)) {
-			throw new IllegalArgumentException("Source or Sink not found in graph.");
+			throw new IllegalArgumentException("Source hoặc Sink không tìm thất tronh graph.");
 		}
 
-		// Init residual graph
+		// xóa graph cũ chạy mới
 		residualGraph.clear();
 		for (String v : originalGraph.getVertices()) {
 			residualGraph.put(v, new HashMap<>());
@@ -77,15 +77,18 @@ public class FordFulkerson {
 		bottlenecks.clear();
 
 		while (true) {
+			// init dữ liệu
 			Map<String, String> parentMap = new HashMap<>();
 			Map<String, ResidualEdge> edgeMap = new HashMap<>();
 			Queue<String> queue = new LinkedList<>();
-
+			// add source vô queue và map
 			queue.add(source);
 			parentMap.put(source, source);
-
+			// queue không trống và chứa sink
 			while (!queue.isEmpty() && !parentMap.containsKey(sink)) {
+				// poll queue
 				String u = queue.poll();
+				//
 				for (ResidualEdge edge : residualGraph.get(u).values()) {
 					String v = edge.v;
 					if (!parentMap.containsKey(v) && edge.residual() > 0) {
@@ -97,10 +100,10 @@ public class FordFulkerson {
 			}
 
 			if (!parentMap.containsKey(sink)) {
-				break; // No augmenting path found
+				break; // không tìm thấy path để sửa
 			}
 
-			// Find bottleneck capacity
+			// tìm bottleneck capacity
 			int bottleneck = Integer.MAX_VALUE;
 			String curr = sink;
 			List<String> pathNodes = new ArrayList<>();
@@ -114,7 +117,7 @@ public class FordFulkerson {
 				pathNodes.add(0, curr);
 			}
 
-			// Augment flow
+			// sửa flow
 			curr = sink;
 			while (!curr.equals(source)) {
 				String prev = parentMap.get(curr);
