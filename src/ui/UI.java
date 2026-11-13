@@ -1,13 +1,13 @@
 package ui;
 
+import java.io.IOException;
 import java.util.Scanner;
 
-import io.InputOuputManager;
+import io.IO;
 import utils.Utils;
 
 public class UI {
 	public static Scanner scanner = new Scanner(System.in);
-	public static InputOuputManager inputOuputManager = new InputOuputManager();
 	public static Utils utils = new Utils();
 
 	public static void mainMenu() {
@@ -41,7 +41,13 @@ public class UI {
 			case "4" -> {
 				menu5();
 			}
-
+			case "0" -> {
+				System.out.println("Exited program successfully!");
+				return;
+			}
+			default -> {
+				System.out.println("Input khong hop le");
+			}
 			}
 
 		}
@@ -66,8 +72,11 @@ public class UI {
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("[1] Nap du lieu tu file");
-				utils.setData();
+				System.out.println("""
+						[1] Nap du lieu tu file
+						Nhap duong dan (path.txt): """);
+				String path = scanner.nextLine().trim();
+				utils.setData(path);
 			}
 			case "2" -> {
 				System.out.println("[2] Xem tong hop graph goc + capacity/weight ");
@@ -96,7 +105,6 @@ public class UI {
 				}
 			}
 			case "0" -> {
-				System.out.println("Exiting program. Goodbye!");
 				return;
 			}
 			default -> {
@@ -134,14 +142,15 @@ public class UI {
 			}
 			case "2" -> {
 				System.out.println("[2] Dijkstra - chon Source/Target va chay tren graph goc");
-				utils.dijkstra();
+				String u = scanner.nextLine().trim();
+				String v = scanner.nextLine().trim();
+				utils.dijkstra(u,v);
 			}
 			case "3" -> {
 				System.out.println("[3] Chay ca hai bai toan tren cung graph goc");
 				utils.runFordFulkersonAndDijkstra();
 			}
 			case "0" -> {
-				System.out.println("Exiting program. Goodbye!");
 				return;
 			}
 			default -> {
@@ -187,7 +196,6 @@ public class UI {
 				utils.verifyFlowAndExamine();
 			}
 			case "0" -> {
-				System.out.println("Exiting program. Goodbye!");
 				return;
 			}
 			default -> {
@@ -230,7 +238,6 @@ public class UI {
 				utils.displayProjectInfo();
 			}
 			case "0" -> {
-				System.out.println("Exiting program. Goodbye!");
 				return;
 			}
 			default -> {

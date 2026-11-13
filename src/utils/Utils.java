@@ -1,22 +1,30 @@
 package utils;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.google.common.graph.ValueGraph;
+
+import algorithms.Dijkstra;
+import io.IO;
+import models.Graph;
 
 
 
 
 public class  Utils{
 	
+	public Graph graph;
+	public static IO inputOuputManager = new IO();
+	public boolean graphValid = false;
+	public Dijkstra dijkstra = new Dijkstra(graph);
 	
-
-	public void setData() {
-		// TODO Auto-generated method stub
-		
+	public void setData(String path) {
+		if((this.graph = inputOuputManager.loadFromFile(path)) != null) {
+			graphValid = true;
+		}
 	}
 	public void displayGraph() {
-		// TODO Auto-generated method stub
 		
 	}
 	public void chooseDatasetAndDebug() {
@@ -31,9 +39,8 @@ public class  Utils{
 		// TODO Auto-generated method stub
 		
 	}
-	public void dijkstra() {
-		// TODO Auto-generated method stub
-		
+	public void dijkstra(String u, String v) {
+		dijkstra.run(u, v);
 	}
 	public void runFordFulkersonAndDijkstra() {
 		// TODO Auto-generated method stub
