@@ -31,10 +31,10 @@ public class Graph {
         adjList.putIfAbsent(u, new ArrayList<>());
         adjList.putIfAbsent(v, new ArrayList<>());
         
-        // Check duplicate
+        // Check cung trung
         for (Edge e : adjList.get(u)) {
             if (e.getV().equals(v)) {
-                throw new IllegalArgumentException("Duplicate arc found between " + u + " and " + v);
+                throw new IllegalArgumentException("Cung trung tai " + u + " and " + v);
             }
         }
 

@@ -6,10 +6,14 @@ import models.Graph;
 import utils.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestRunner {
+	public static final List<String> testResults = new ArrayList<String>();
 	public static Utils utils = new Utils();
     public static void runAllTests() {
+    	testResults.clear();
         System.out.println("\n========================================");
         System.out.println("       RUNNING AUTOMATED TEST CASES      ");
         System.out.println("========================================");
@@ -71,8 +75,9 @@ public class TestRunner {
 
             Dijkstra dj = new Dijkstra(g);
             dj.run(srcDij, tgtDij);
-
-            System.out.printf("[%s] %-35s : PASS (MaxFlow: %d, Valid: %b, Dijkstra Success: %b)\n", id, desc, mf, valid, dj.isSuccess());
+            String result = String.format("[%s] %-35s : PASS (MaxFlow: %d, Valid: %b, Dijkstra Success: %b)\n", id, desc, mf, valid, dj.isSuccess());
+            System.out.print(result);
+            testResults.add(result);
         } catch (Exception e) {
             System.out.printf("[%s] %-35s : FAIL (Exception: %s)\n", id, desc, e.getMessage());
         }

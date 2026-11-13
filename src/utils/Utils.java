@@ -151,18 +151,52 @@ public class Utils {
 	}
 
 	public void displayPassFail() {
-		// TODO Auto-generated method stub
-
+		for(String s :TestRunner.testResults) {
+			System.out.print(s);
+		}
 	}
 
 	public void configAndHelper() {
-		// TODO Auto-generated method stub
-
+	    System.out.println("""
+	            +================================================================+
+	            |              DINH DANG INPUT & HUONG DAN THUAT TOAN            |
+	            +================================================================+
+	            | 1. DINH DANG FILE DATASET (.txt):                              |
+	            |    - Moi dong bieu dien mot cung (arc) theo cau truc:          |
+	            |     <Source> <Target> <Capacity (int >= 0)> <Weight (real >= 0)|
+	            |    - Vi dụ: WH A 12 4.0                                        |
+	            |    - Quy ước: Khong co self-loop, khong trung cung giua 2 dinh.|
+	            |    - Cung co capacity = 0 duoc xem la tuyen khong kha dung.    |
+	            |                                                                |
+	            | 2. THUAT TOAN FORD-FULKERSON (Maximum Flow):                   |
+	            |    - Chạy tren residual graph rieng (khoi tao moi tu cap goc). |
+	            |    - Cap nhat dung capacity tren cung thuan va cung nguoc.     |
+	            |    - Ket thuc khi khong con augmenting path (Max Flow reached).|
+	            |                                                                |
+	            | 3. THUAT TOAN DIJKSTRA (Shortest Path):                        |
+	            |    - Chạy tren graph goc, TUYET DOI khong dung residual graph. |
+	            |    - Chi xet cac cung kha dung co capacity > 0 va weight >= 0. |
+	            |    - Ket qua tra ve duong di ngan nhat va tong chi phi (Cost). |
+	            +----------------------------------------------------------------+""");
 	}
 
 	public void displayProjectInfo() {
-		// TODO Auto-generated method stub
-
+	    System.out.println("""
+	            +================================================================+
+	            |                  THONG TIN PROJECT / THANH VIEN                |
+	            +================================================================+
+	            | Mon hoc : CSC106400 - Ly Thuyet Do Thi                         |
+	            | Project : De 04 - Goods Distribution Network                   |
+	            |                                                                |
+	            | Danh sach thanh vien nhom 2:                                   |
+	            |   1. Pham Hoang Duong   25211TT3505                            |
+	            |   2. Luu Long Hai		                                         |
+	            | San pham                                                       |
+	            |   - Bao cao Word (.docx)                                       |
+	            |   - Nhat ky AI (.xlsx)	                                     |
+	            |   - Source code Java chay hoan chinh                           |
+	            |   - Video demo                                                 |
+	            +----------------------------------------------------------------+""");
 	}
 
 	public void resetResults() {
