@@ -14,43 +14,43 @@ public class TestRunner {
         System.out.println("       RUNNING AUTOMATED TEST CASES      ");
         System.out.println("========================================");
 
-        runTest("TC01", "Max flow normal / multiple paths", "datasets/flow_demo.txt", "WH", "ST", "WH", "ST", true);
-        runTest("TC02", "Reverse residual update", "datasets/ds_rev.txt", "S", "T", "S", "T", true);
-        runTest("TC03", "Source-Sink disconnected -> flow 0", "datasets/ds_flow0.txt", "S", "T", "S", "T", true);
-        runTest("TC04", "Zero-capacity arc ignored", "datasets/ds_zero.txt", "S", "T", "S", "T", true);
-        runTest("TC05", "Dijkstra shortest path", "datasets/logistics_main.txt", "WH", "ST", "WH", "ST", true);
-        runTest("TC06", "Dijkstra NO PATH", "datasets/ds_nopath.txt", "S", "T", "S", "T", false);
-        runTestException("TC07", "Invalid capacity / weight / input", "datasets/ds_invalid.txt");
+        runTest("TC01", "Max flow normal / multiple paths", "flow_demo.txt", "WH", "ST", "WH", "ST", true);
+        runTest("TC02", "Reverse residual update", "ds_rev.txt", "S", "T", "S", "T", true);
+        runTest("TC03", "Source-Sink disconnected -> flow 0", "ds_flow0.txt", "S", "T", "S", "T", true);
+        runTest("TC04", "Zero-capacity arc ignored", "ds_zero.txt", "S", "T", "S", "T", true);
+        runTest("TC05", "Dijkstra shortest path", "logistics_main.txt", "WH", "ST", "WH", "ST", true);
+        runTest("TC06", "Dijkstra NO PATH", "ds_nopath.txt", "S", "T", "S", "T", false);
+        runTestException("TC07", "Invalid capacity / weight / input", "ds_invalid.txt");
     }
     
     public static void runTest1(String testName) {
     	switch(testName) {
     	case "1" ->{
-    		runTest("TC01", "Max flow normal / multiple paths", "datasets/flow_demo.txt", "WH", "ST", "WH", "ST", true);
+    		runTest("TC01", "Max flow normal / multiple paths", "flow_demo.txt", "WH", "ST", "WH", "ST", true);
     	}
 
     	case "2" ->{
-    		runTest("TC02", "Reverse residual update", "datasets/ds_rev.txt", "S", "T", "S", "T", true);
+    		runTest("TC02", "Reverse residual update", "ds_rev.txt", "S", "T", "S", "T", true);
     	}
 
     	case "3" ->{
-    		runTest("TC03", "Source-Sink disconnected -> flow 0", "datasets/ds_flow0.txt", "S", "T", "S", "T", true);
+    		runTest("TC03", "Source-Sink disconnected -> flow 0", "ds_flow0.txt", "S", "T", "S", "T", true);
     	}
 
     	case "4" ->{
-            runTest("TC04", "Zero-capacity arc ignored", "datasets/ds_zero.txt", "S", "T", "S", "T", true);
+            runTest("TC04", "Zero-capacity arc ignored", "ds_zero.txt", "S", "T", "S", "T", true);
     	}
 
     	case "5" ->{
-            runTest("TC05", "Dijkstra shortest path", "datasets/logistics_main.txt", "WH", "ST", "WH", "ST", true);
+            runTest("TC05", "Dijkstra shortest path", "logistics_main.txt", "WH", "ST", "WH", "ST", true);
     	}
 
     	case "6" ->{
-            runTest("TC06", "Dijkstra NO PATH", "datasets/ds_nopath.txt", "S", "T", "S", "T", false);
+            runTest("TC06", "Dijkstra NO PATH", "ds_nopath.txt", "S", "T", "S", "T", false);
     	}
 
     	case "7" ->{
-            runTestException("TC07", "Invalid capacity / weight / input", "datasets/ds_invalid.txt");
+            runTestException("TC07", "Invalid capacity / weight / input", "ds_invalid.txt");
     	}
     	}
     }
