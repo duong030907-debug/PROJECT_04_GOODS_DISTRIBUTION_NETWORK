@@ -12,6 +12,8 @@
 
 # Package Files #
 *.jar
+# ...except vendored dependencies (no build tool in this project)
+!lib/*.jar
 *.war
 *.nar
 *.ear

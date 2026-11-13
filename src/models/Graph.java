@@ -141,7 +141,6 @@ public class Graph {
     }
 
     public void printMatrix() {
-        // Print header columns
         System.out.printf("%-4s", " ");
         for (int j = 1; j <= n; j++) {
             System.out.printf("%-3d", j);
@@ -173,11 +172,9 @@ public class Graph {
     public boolean checkConsistency() {
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
-                // Check matrix and adjacency list symmetry for undirected graphs
                 if (!directed && matrix[i][j] != matrix[j][i]) {
                     return false;
                 }
-                // Check consistency between matrix and adjacency list
                 boolean inList = adj.get(i).contains(j);
                 boolean inMatrix = (matrix[i][j] == 1);
                 if (inMatrix != inList) {
