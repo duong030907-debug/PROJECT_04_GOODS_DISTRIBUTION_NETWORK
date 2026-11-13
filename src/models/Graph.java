@@ -19,7 +19,12 @@ public class Graph {
         datasetName = "None";
         zeroCapacityCount = 0;
     }
-	
+    public void clear() {
+        adjList.clear();
+        vertices.clear();
+        datasetName = "None";
+        zeroCapacityCount = 0;
+    }
     public void addEdge(String u, String v, int capacity, int weight) {
         vertices.add(u);
         vertices.add(v);
@@ -91,6 +96,9 @@ public class Graph {
 	public void setZeroCapacityCount(int zeroCapacityCount) {
 		this.zeroCapacityCount = zeroCapacityCount;
 	}
-
+	
+	public boolean isValid() {
+		return !(zeroCapacityCount==0);
+	}
 	
 }

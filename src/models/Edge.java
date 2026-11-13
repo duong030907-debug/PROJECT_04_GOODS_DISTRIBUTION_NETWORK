@@ -57,6 +57,6 @@ public class Edge {
 
 	@Override
 	public String toString() {
-		return String.format("(%s -> %s) [Cap: %d, Weight: %.1f, Flow: %d]", u, v, capacity, weight, flow);
+		return String.format("(%s -> %s) [Cap: %d, Weight: %d, Flow: %d]", u, v, capacity, weight, flow);
 	}
 }
