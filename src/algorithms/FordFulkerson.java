@@ -14,189 +14,193 @@ import models.Graph;
 
 public class FordFulkerson {
 	private static class ResidualEdge {
-        String u, v;
-        int capacity;
-        int flow;
-        ResidualEdge rev;
+		String u, v;
+		int capacity;
+		int flow;
+		ResidualEdge rev;
 
-        ResidualEdge(String u, String v, int capacity) {
-            this.u = u;
-            this.v = v;
-            this.capacity = capacity;
-            this.flow = 0;
-        }
+		ResidualEdge(String u, String v, int capacity) {
+			this.u = u;
+			this.v = v;
+			this.capacity = capacity;
+			this.flow = 0;
+		}
 
-        int residual() {
-            return capacity - flow;
-        }
-    }
-	
+		int residual() {
+			return capacity - flow;
+		}
+	}
+
 	private int maxFlow;
-    private List<String> augmentingPaths;
-    private List<Integer> bottlenecks;
-    private Map<String, Map<String, ResidualEdge>> residualGraph;
-    private models.Graph originalGraph;
-    
-    public FordFulkerson(Graph graph) {
-        this.originalGraph = graph;
-        this.augmentingPaths = new ArrayList<>();
-        this.bottlenecks = new ArrayList<>();
-        this.maxFlow = 0;
-        this.residualGraph = new HashMap<>();
-    }
-    public int run(String source, String sink) {
-        if (!originalGraph.getNodes().contains(source) || !originalGraph.getNodes().contains(sink)) {
-            throw new IllegalArgumentException("Source or Sink not found in graph.");
-        }
+	private List<String> augmentingPaths;
+	private List<Integer> bottlenecks;
+	private Map<String, Map<String, ResidualEdge>> residualGraph;
+	private Graph originalGraph;
 
-        // Initialize residual graph
-        residualGraph.clear();
-        for (String v : originalGraph.getNodes()) {
-            residualGraph.put(v, new HashMap<>());
-        }
+	public FordFulkerson(Graph graph) {
+		this.originalGraph = graph;
+		this.augmentingPaths = new ArrayList<>();
+		this.bottlenecks = new ArrayList<>();
+		this.maxFlow = 0;
+		this.residualGraph = new HashMap<>();
+	}
 
-        for (Map.Entry<String, List<Edge>> entry : originalGraph.getAdjList().entrySet()) {
-            String u = entry.getKey();
-            for (Edge e : entry.getValue()) {
-                String v = e.v;
-                int cap = e.capacity;
+	public int run(String source, String sink) {
+		if (!originalGraph.getVertices().contains(source) || !originalGraph.getNodes().contains(sink)) {
+			throw new IllegalArgumentException("Source or Sink not found in graph.");
+		}
 
-                ResidualEdge forward = new ResidualEdge(u, v, cap);
-                ResidualEdge backward = new ResidualEdge(v, u, 0);
-                forward.rev = backward;
-                backward.rev = forward;
+		// Init residual graph
+		residualGraph.clear();
+		for (String v : originalGraph.getVertices()) {
+			residualGraph.put(v, new HashMap<>());
+		}
 
-                residualGraph.get(u).put(v, forward);
-                residualGraph.get(v).put(u, backward);
-            }
-        }
+		for (Map.Entry<String, List<Edge>> entry : originalGraph.getAdj().entrySet()) {
+			String u = entry.getKey();
+			for (Edge e : entry.getValue()) {
+				String v = e.v;
+				int cap = e.capacity;
 
-        maxFlow = 0;
-        augmentingPaths.clear();
-        bottlenecks.clear();
+				ResidualEdge forward = new ResidualEdge(u, v, cap);
+				ResidualEdge backward = new ResidualEdge(v, u, 0);
+				forward.rev = backward;
+				backward.rev = forward;
 
-        while (true) {
-            Map<String, String> parentMap = new HashMap<>();
-            Map<String, ResidualEdge> edgeMap = new HashMap<>();
-            Queue<String> queue = new LinkedList<>();
+				residualGraph.get(u).put(v, forward);
+				residualGraph.get(v).put(u, backward);
+			}
+		}
 
-            queue.add(source);
-            parentMap.put(source, source);
+		maxFlow = 0;
+		augmentingPaths.clear();
+		bottlenecks.clear();
 
-            while (!queue.isEmpty() && !parentMap.containsKey(sink)) {
-                String u = queue.poll();
-                for (ResidualEdge edge : residualGraph.get(u).values()) {
-                    String v = edge.v;
-                    if (!parentMap.containsKey(v) && edge.residual() > 0) {
-                        parentMap.put(v, u);
-                        edgeMap.put(v, edge);
-                        queue.add(v);
-                    }
-                }
-            }
+		while (true) {
+			Map<String, String> parentMap = new HashMap<>();
+			Map<String, ResidualEdge> edgeMap = new HashMap<>();
+			Queue<String> queue = new LinkedList<>();
 
-            if (!parentMap.containsKey(sink)) {
-                break; // No augmenting path found
-            }
+			queue.add(source);
+			parentMap.put(source, source);
 
-            // Find bottleneck capacity
-            int bottleneck = Integer.MAX_VALUE;
-            String curr = sink;
-            List<String> pathNodes = new ArrayList<>();
-            pathNodes.add(sink);
+			while (!queue.isEmpty() && !parentMap.containsKey(sink)) {
+				String u = queue.poll();
+				for (ResidualEdge edge : residualGraph.get(u).values()) {
+					String v = edge.v;
+					if (!parentMap.containsKey(v) && edge.residual() > 0) {
+						parentMap.put(v, u);
+						edgeMap.put(v, edge);
+						queue.add(v);
+					}
+				}
+			}
 
-            while (!curr.equals(source)) {
-                String prev = parentMap.get(curr);
-                ResidualEdge edge = residualGraph.get(prev).get(curr);
-                bottleneck = Math.min(bottleneck, edge.residual());
-                curr = prev;
-                pathNodes.add(0, curr);
-            }
+			if (!parentMap.containsKey(sink)) {
+				break; // No augmenting path found
+			}
 
-            // Augment flow
-            curr = sink;
-            while (!curr.equals(source)) {
-                String prev = parentMap.get(curr);
-                ResidualEdge edge = residualGraph.get(prev).get(curr);
-                edge.flow += bottleneck;
-                edge.rev.flow -= bottleneck;
-                curr = prev;
-            }
+			// Find bottleneck capacity
+			int bottleneck = Integer.MAX_VALUE;
+			String curr = sink;
+			List<String> pathNodes = new ArrayList<>();
+			pathNodes.add(sink);
 
-            maxFlow += bottleneck;
-            augmentingPaths.add(String.join(" -> ", pathNodes));
-            bottlenecks.add(bottleneck);
-        }
+			while (!curr.equals(source)) {
+				String prev = parentMap.get(curr);
+				ResidualEdge edge = residualGraph.get(prev).get(curr);
+				bottleneck = Math.min(bottleneck, edge.residual());
+				curr = prev;
+				pathNodes.add(0, curr);
+			}
 
-        // Sync flow back to original graph edges for reporting
-        for (List<Edge> edges : originalGraph.getAdjList().values()) {
-            for (Edge e : edges) {
-                e.setFlow(0); // reset
-            }
-        }
+			// Augment flow
+			curr = sink;
+			while (!curr.equals(source)) {
+				String prev = parentMap.get(curr);
+				ResidualEdge edge = residualGraph.get(prev).get(curr);
+				edge.flow += bottleneck;
+				edge.rev.flow -= bottleneck;
+				curr = prev;
+			}
 
-        for (String u : residualGraph.keySet()) {
-            for (ResidualEdge re : residualGraph.get(u).values()) {
-                if (re.flow > 0) {
-                    // Check if it's an original physical arc
-                    for (Edge e : originalGraph.getAdjList().getOrDefault(u, Collections.emptyList())) {
-                        if (e.getV().equals(re.v)) {
-                            e.setFlow(re.flow);
-                        }
-                    }
-                }
-            }
-        }
+			maxFlow += bottleneck;
+			augmentingPaths.add(String.join(" -> ", pathNodes));
+			bottlenecks.add(bottleneck);
+		}
 
-        return maxFlow;
-    }
+		//
+		for (List<Edge> edges : originalGraph.getAdjList().values()) {
+			for (Edge e : edges) {
+				e.setFlow(0);
+			}
+		}
 
-    public boolean verifyFlow(String source, String sink) {
-        // 1. Capacity constraints: 0 <= f(u,v) <= c(u,v)
-        for (List<Edge> edges : originalGraph.getAdjList().values()) {
-            for (Edge e : edges) {
-                if (e.getFlow() < 0 || e.getFlow() > e.getCapacity()) {
-                    return false;
-                }
-            }
-        }
+		for (String u : residualGraph.keySet()) {
+			for (ResidualEdge re : residualGraph.get(u).values()) {
+				if (re.flow > 0) {
+					// Check is original
+					for (Edge e : originalGraph.getAdjList().getOrDefault(u, Collections.emptyList())) {
+						if (e.getV().equals(re.v)) {
+							e.setFlow(re.flow);
+						}
+					}
+				}
+			}
+		}
 
-        // 2. Flow conservation at intermediate nodes
-        Map<String, Integer> inflow = new HashMap<>();
-        Map<String, Integer> outflow = new HashMap<>();
+		return maxFlow;
+	}
 
-        for (String v : originalGraph.getNodes()) {
-            inflow.put(v, 0);
-            outflow.put(v, 0);
-        }
+	public boolean verifyFlow(String source, String sink) {
+		// 1. Capacity constraints: 0 <= f(u,v) <= c(u,v)
+		for (List<Edge> edges : originalGraph.getAdjList().values()) {
+			for (Edge e : edges) {
+				if (e.getFlow() < 0 || e.getFlow() > e.getCapacity()) {
+					return false;
+				}
+			}
+		}
 
-        for (Map.Entry<String, List<Edge>> entry : originalGraph.getAdjList().entrySet()) {
-            String u = entry.getKey();
-            for (Edge e : entry.getValue()) {
-                String v = e.getV();
-                int f = e.getFlow();
-                outflow.put(u, outflow.get(u) + f);
-                inflow.put(v, inflow.get(v) + f);
-            }
-        }
+		// 2. Flow conservation at intermediate nodes
+		Map<String, Integer> inflow = new HashMap<>();
+		Map<String, Integer> outflow = new HashMap<>();
 
-        for (String v : originalGraph.getNodes()) {
-            if (!v.equals(source) && !v.equals(sink)) {
-                if (!Objects.equals(inflow.get(v), outflow.get(v))) {
-                    return false;
-                }
-            }
-        }
+		for (String v : originalGraph.getNodes()) {
+			inflow.put(v, 0);
+			outflow.put(v, 0);
+		}
 
-        // 3. Source outflow == Sink inflow == maxFlow
-        int srcOut = outflow.get(source);
-        int sinkIn = inflow.get(sink);
-        return srcOut == maxFlow && sinkIn == maxFlow;
-    }
+		for (Map.Entry<String, List<Edge>> entry : originalGraph.getAdjList().entrySet()) {
+			String u = entry.getKey();
+			for (Edge e : entry.getValue()) {
+				String v = e.getV();
+				int f = e.getFlow();
+				outflow.put(u, outflow.get(u) + f);
+				inflow.put(v, inflow.get(v) + f);
+			}
+		}
 
-    public List<String> getAugmentingPaths() { return augmentingPaths; }
-    public List<Integer> getBottlenecks() { return bottlenecks; }
+		for (String v : originalGraph.getNodes()) {
+			if (!v.equals(source) && !v.equals(sink)) {
+				if (!Objects.equals(inflow.get(v), outflow.get(v))) {
+					return false;
+				}
+			}
+		}
+
+		// 3. Source outflow == Sink inflow == maxFlow
+		int srcOut = outflow.get(source);
+		int sinkIn = inflow.get(sink);
+		return srcOut == maxFlow && sinkIn == maxFlow;
+	}
+
+	public List<String> getAugmentingPaths() {
+		return augmentingPaths;
+	}
+
+	public List<Integer> getBottlenecks() {
+		return bottlenecks;
+	}
 
 }
-
-

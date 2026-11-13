@@ -31,11 +31,11 @@ public class Dijkstra {
     	distances.clear();
         predecessors.clear();
         success = false;
-        if (!graph.getNodes().contains(source) || !graph.getNodes().contains(target)) {
+        if (!graph.getVertices().contains(source) || !graph.getVertices().contains(target)) {
             throw new IllegalArgumentException("Không tìm thấy nguồn và đích trong đồ thị.");
         }
         
-        for (String v : graph.getNodes()) {
+        for (String v : graph.getVertices()) {
             distances.put(v, Double.MAX_VALUE);
         }
         
@@ -49,8 +49,8 @@ public class Dijkstra {
 
             if (current.distance > distances.get(u)) continue;
 
-            for (Edge e : graph.getAdjEdge()) {
-                // Rule: Dijkstra only uses usable arcs with capacity > 0 and weight >= 0
+            for (Edge e : graph.getAdjList().getOrDefault(u, Collections.emptyList())) {
+                // run if capacity > 0 and weight >= 0
                 if (e.capacity > 0) {
                     String v = e.v;
                     double weight = e.weight;
