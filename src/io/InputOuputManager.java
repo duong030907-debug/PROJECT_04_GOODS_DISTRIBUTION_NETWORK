@@ -33,6 +33,7 @@ public class InputOuputManager {
             g.addEdge(u, v, cap, weight);
         }
         reader.close();
+        g.setDatasetName(datasetName);
         return g;
 	}
 }

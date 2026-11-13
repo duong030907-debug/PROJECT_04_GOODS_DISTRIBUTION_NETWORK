@@ -23,7 +23,7 @@ public class  Utils{
 		// TODO Auto-generated method stub
 		
 	}
-	public void reloadOrClearDataset(int a) {
+	public void reloadOrClearDataset(String a) {
 		// TODO Auto-generated method stub
 		
 	}
