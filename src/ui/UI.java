@@ -76,7 +76,20 @@ public class UI {
 						[1] Nap du lieu tu file
 						Nhap duong dan (path.txt): """);
 				String path = scanner.nextLine().trim();
-				utils.setData(path);
+				try {
+
+					utils.setData(path);
+					if (utils.isGraphValid()) {
+						System.out.println("[OK] " + utils.getGraph().getVertices().size() + " dinh | "
+								+ utils.getGraph().getEdgeCount() + " cung");
+						System.out.println("[OK] Khong chu ky / cung lap");
+						System.out.println("[OK] Suc chua va weight hop le");
+						System.out.println("[OK] Weight khong am");
+						System.out.println("[INFO] Clear");
+					}
+				} catch (Exception e) {
+					System.out.println("[ERROR] Failed to load file: " + e.getMessage());
+				}
 			}
 			case "2" -> {
 				System.out.println("[2] Xem tong hop graph goc + capacity/weight ");
@@ -144,7 +157,7 @@ public class UI {
 				System.out.println("[2] Dijkstra - chon Source/Target va chay tren graph goc");
 				String u = scanner.nextLine().trim();
 				String v = scanner.nextLine().trim();
-				utils.dijkstra(u,v);
+				utils.dijkstra(u, v);
 			}
 			case "3" -> {
 				System.out.println("[3] Chay ca hai bai toan tren cung graph goc");

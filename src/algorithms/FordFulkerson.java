@@ -46,7 +46,7 @@ public class FordFulkerson {
 	}
 
 	public int run(String source, String sink) {
-		if (!originalGraph.getVertices().contains(source) || !originalGraph.getNodes().contains(sink)) {
+		if (!originalGraph.getVertices().contains(source) || !originalGraph.getVertices().contains(sink)) {
 			throw new IllegalArgumentException("Source or Sink not found in graph.");
 		}
 
@@ -56,7 +56,7 @@ public class FordFulkerson {
 			residualGraph.put(v, new HashMap<>());
 		}
 
-		for (Map.Entry<String, List<Edge>> entry : originalGraph.getAdj().entrySet()) {
+		for (Map.Entry<String, List<Edge>> entry : originalGraph.getAdjList().entrySet()) {
 			String u = entry.getKey();
 			for (Edge e : entry.getValue()) {
 				String v = e.v;
@@ -166,7 +166,7 @@ public class FordFulkerson {
 		Map<String, Integer> inflow = new HashMap<>();
 		Map<String, Integer> outflow = new HashMap<>();
 
-		for (String v : originalGraph.getNodes()) {
+		for (String v : originalGraph.getVertices()) {
 			inflow.put(v, 0);
 			outflow.put(v, 0);
 		}
@@ -181,7 +181,7 @@ public class FordFulkerson {
 			}
 		}
 
-		for (String v : originalGraph.getNodes()) {
+		for (String v : originalGraph.getVertices()) {
 			if (!v.equals(source) && !v.equals(sink)) {
 				if (!Objects.equals(inflow.get(v), outflow.get(v))) {
 					return false;

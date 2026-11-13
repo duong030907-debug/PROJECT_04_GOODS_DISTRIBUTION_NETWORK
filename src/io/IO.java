@@ -24,7 +24,7 @@ public class IO {
 	            String u = parts[0];
 	            String v = parts[1];
 	            int cap = Integer.parseInt(parts[2]);
-	            double weight = Double.parseDouble(parts[3]);
+	            int weight = Integer.parseInt(parts[3]);
 
 	            if (cap < 0 || weight < 0) {
 	                reader.close();
