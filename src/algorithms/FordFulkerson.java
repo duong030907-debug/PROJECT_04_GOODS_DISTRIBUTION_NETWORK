@@ -108,7 +108,7 @@ public class FordFulkerson {
 			String curr = sink;
 			List<String> pathNodes = new ArrayList<>();
 			pathNodes.add(sink);
-
+			// hiện tại khác source
 			while (!curr.equals(source)) {
 				String prev = parentMap.get(curr);
 				ResidualEdge edge = residualGraph.get(prev).get(curr);
@@ -156,7 +156,7 @@ public class FordFulkerson {
 	}
 
 	public boolean verifyFlow(String source, String sink) {
-		// 1. Capacity constraints: 0 <= f(u,v) <= c(u,v)
+		// 1. Điều kiện: 0 <= f(u,v) <= c(u,v)
 		for (List<Edge> edges : originalGraph.getAdjList().values()) {
 			for (Edge e : edges) {
 				if (e.getFlow() < 0 || e.getFlow() > e.getCapacity()) {
@@ -165,7 +165,7 @@ public class FordFulkerson {
 			}
 		}
 
-		// 2. Flow conservation at intermediate nodes
+		// 2. Map flow in out
 		Map<String, Integer> inflow = new HashMap<>();
 		Map<String, Integer> outflow = new HashMap<>();
 
@@ -192,7 +192,7 @@ public class FordFulkerson {
 			}
 		}
 
-		// 3. Source outflow == Sink inflow == maxFlow
+		// 3. source outflow == sink inflow == maxFlow
 		int srcOut = outflow.get(source);
 		int sinkIn = inflow.get(sink);
 		return srcOut == maxFlow && sinkIn == maxFlow;
