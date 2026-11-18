@@ -3,7 +3,7 @@ package util;
 import algorithm.Dijaktra;
 import algorithm.FordFulkerson;
 import model.Graph;
-import test.TestRunner;
+import testing.TestRunner;
 
 public class Utils {
 	Graph graph = new Graph();
