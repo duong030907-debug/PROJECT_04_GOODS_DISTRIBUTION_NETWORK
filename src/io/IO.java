@@ -7,6 +7,14 @@ import java.io.FileReader;
 import model.Graph;
 
 public class IO {
+/* 	  | 1. ĐỊNH DẠNG FILE DATASET (.txt):                              |
+	  |    - Mỗi dòng biểu diễn một cung (arc) theo cấu trúc:          |
+	  |   <Source> <Target> <Capacity (int >= 0)> <Weight (real >= 0)> |
+	  |    - Ví dụ: WH A 12 4n                                         |
+	  |    - Quy ước: Không có self-loop, không trùng cung giữa 2 đỉnh.|
+	  |    - Cung có capacity = 0 được xem là tuyến không khả dụng.	   |
+	  |	 - File lưu tại thư mục dataset/							   |
+	 * */
 	public Graph loadFromFile(String filePath) {
 		Graph graph = new Graph();
 		try {
