@@ -1,7 +1,6 @@
 package ui;
 
 import java.util.Scanner;
-
 import util.Utils;
 
 public class UI {
@@ -9,7 +8,7 @@ public class UI {
 	public static Scanner scanner = new Scanner(System.in);
 	public static Utils utils = new Utils();
 
-	public void start() {
+	public static void start() {
 		while (true) {
 			System.out.printf("""
 					+================================================================+
@@ -19,13 +18,13 @@ public class UI {
 					| Graph   : Directed | Capacity(int >=0) + Weight(real >=0)      |
 					| V = %-3d | E = %-3d | Zero-capacity arcs = %-21d |
 					|                                                                |
-					| [1] Quan ly du lieu mang van chuyen                            |
-					| [2] Chay Maximum Flow / Dijkstra                               |
-					| [3] Ket qua / Kiem chung                                       |
-					| [4] Kiem thu / Huong dan                                       |
-					| [0] Thoat chuong trinh                                         |
+					| [1] Quản lý dữ liệu mạng vận chuyển                            |
+					| [2] Chạy Maximum Flow / Dijkstra                               |
+					| [3] Kết quả / Kiểm chứng                                       |
+					| [4] Kiểm thử / Hướng dẫn                                       |
+					| [0] Thoát chương trình                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang [0-4]: """, utils.getDatasetName(), utils.getVertexCount(), utils.getEdgeCount(),
+					Chọn chức năng [0-4]: """, utils.getDatasetName(), utils.getVertexCount(), utils.getEdgeCount(),
 					utils.getZeroCapCount());
 			String i = scanner.nextLine().trim();
 			switch (i) {
@@ -42,13 +41,12 @@ public class UI {
 				menu5();
 			}
 			case "0" -> {
-				System.out.println("Exited program successfully!");
+				System.out.println("Thoát chương trình thành công!");
 				return;
 			}
 			default -> {
-				System.out.println("Input khong hop le");
+				System.out.println("[ERROR} Input không hợp lệ!");
 			}
-
 			}
 		}
 	}
@@ -57,109 +55,110 @@ public class UI {
 		while (true) {
 			System.out.printf("""
 					+================================================================+
-					|                 QUAN LY DU LIEU MANG VAN CHUYEN                |
+					|                 QUẢN LÝ DỮ LIỆU MẠNG VẬN CHUYỂN                |
 					+================================================================+
 					| Dataset : %-52s |
 					|                                                                |
-					| [1] Nap du lieu tu file                                        |
-					| [2] Xem tong hop graph goc + capacity/weight                   |
-					| [3] Chon dataset mau / kiem thu                                |
-					| [4] Reload hoac Clear dataset hien tai                         |
-					| [0] Quay lai Main Menu                                         |
+					| [1] Nạp dữ liệu từ file                                        |
+					| [2] Xem tổng hợp graph gốc + capacity/weight                   |
+					| [3] Chọn dataset mẫu / kiểm thử                                |
+					| [4] Reload hoặc Clear dataset hiện tại                         |
+					| [0] Quay lại Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang: """, utils.getDatasetName());
+					Chọn chức năng: """, utils.getDatasetName());
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("""
-						[1] Nap du lieu tu file
-						Nhap duong dan (path.txt): """);
+				System.out.print("""
+						[1] Nạp dữ liệu từ file
+						Nhập đường dẫn (path.txt): """);
 				String path = scanner.nextLine().trim();
 				try {
 					if (utils.setData(path)) {
-						System.out.printf(
-								"""
-										+================================================================+
-										|                   GOODS DISTRIBUTION NETWORK                   |
-										+================================================================+
-										| Dataset : %-52s |
-										| Graph   : Directed | Capacity(int >=0) + Weight(real >=0)      |
-										| V = %-3d | E = %-3d | Zero-capacity arcs = %-21d |                                    |
-										+----------------------------------------------------------------+""",
+						System.out.printf("""
+								+================================================================+
+								|                   GOODS DISTRIBUTION NETWORK                   |
+								+================================================================+
+								| Dataset : %-52s |
+								| Graph   : Directed | Capacity(int >=0) + Weight(real >=0)      |
+								| V = %-3d | E = %-3d | Zero-capacity arcs = %-21d |
+								+----------------------------------------------------------------+%n""",
 								utils.getDatasetName(), utils.getVertexCount(), utils.getEdgeCount(),
 								utils.getZeroCapCount());
-						System.out.println("[INFO] Nhap du lieu thanh cong");
+						System.out.println("[INFO] Nhập dữ liệu thành công");
 					}
 				} catch (Exception e) {
 					System.out.println("[ERROR] Failed to load file: " + e.getMessage());
 				}
 			}
 			case "2" -> {
-				System.out.println("[2] Xem tong hop graph goc + capacity/weight ");
+				System.out.println("[2] Xem tổng hợp graph gốc + capacity/weight ");
 				utils.displayGraph();
-				continue;
 			}
 			case "3" -> {
-				System.out.println("[2] Chon dataset mau / kiem thu ");
-				chooseDatasetAndDebug();
-				continue;
+				System.out.println("[3] Chọn dataset mẫu / kiểm thử ");
+				chooseDatzasetAndDebug();
 			}
 			case "4" -> {
 				while (true) {
-					System.out.println("""
-							[4] Reload hoac Clear dataset hien tai
-							\t [1] Reload dataset
-							\t [2] Clear dataset
-							\t [0] Quay lai Main Menu
-							""");
+					System.out.printf("""
+							+================================================================+
+							|             RELOAD HOẶC CLEAR DATASET HIỆN TẠI                 |
+							+================================================================+
+							| Dataset : %-52s |
+							|                                                                |
+							| [1] Reload dataset                                             |
+							| [2] Clear dataset                                              |
+							| [0] Quay lại Main Menu                                         |
+							+----------------------------------------------------------------+
+							Chọn chức năng: """, utils.getDatasetName());
 					String j = scanner.nextLine().trim();
 					switch (j) {
 					case "1" -> {
-						System.out.println(utils.reloadDataset() ? "Reload thanh cong" : "Reload that bai");
+						System.out.println(utils.reloadDataset() ? "[INFO] Reload thành công" : "[INFO] Reload thất bại");
 					}
 					case "2" -> {
-						System.out.println(utils.clearDataset() ? "Clear thanh cong" : "Clear that bai");
+						System.out.println(utils.clearDataset() ? "[INFO] Clear thành công" : "[INFO] Clear thất bại");
 					}
-
 					case "0" -> {
 						break;
 					}
 					default -> {
-						System.out.println("Input khong hop le");
+						System.out.println("[ERROR} Input không hợp lệ!");
 					}
 					}
+					if (j.equals("0"))
+						break;
 				}
 			}
-
 			case "0" -> {
 				return;
 			}
 			default -> {
-				System.out.println("Input khong hop le");
+				System.out.println("[ERROR} Input không hợp lệ!");
 			}
 			}
 		}
 	}
 
 	private static void chooseDatasetAndDebug() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("[INFO] Chức năng chọn dataset mẫu đang được phát triển.");
 	}
 
 	public static void menu3() {
 		while (true) {
 			System.out.printf("""
 					+================================================================+
-					|                  CHAY MAXIMUM FLOW / DIJKSTRA                  |
+					|                  CHẠY MAXIMUM FLOW / DIJKSTRA                  |
 					+================================================================+
 					| Dataset : %-52s |
 					|                                                                |
-					| [1] Ford-Fulkerson - chon Source/Sink va chay                  |
-					| [2] Dijkstra - chon Source/Target va chay tren graph goc       |
-					| [3] Chay ca hai bai toan tren cung graph goc                   |
-					| [0] Quay lai Main Menu                                         |
+					| [1] Ford-Fulkerson - chọn Source/Sink và chạy                  |
+					| [2] Dijkstra - chọn Source/Target và chạy trên graph gốc       |
+					| [3] Chạy cả hai bài toán trên cùng graph gốc                   |
+					| [0] Quay lại Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang: """, utils.getDatasetName());
+					Chọn chức năng: """, utils.getDatasetName());
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
@@ -168,8 +167,8 @@ public class UI {
 				System.out.print("Enter Sink vertex: ");
 				String sink = scanner.nextLine().trim();
 				try {
-					utils.fordFulkerson(source,sink);
-					System.out.println("[SUCCESS] Ford-Fulkerson completed. Max Flow = " + utils.getMaxFlow());
+					utils.fordFulkerson(source, sink);
+					System.out.println("[SUCCESS] Ford-Fulkerson chạy thành công. Max Flow = " + utils.getMaxFlow());
 				} catch (Exception e) {
 					System.out.println("[ERROR] " + e.getMessage());
 				}
@@ -180,8 +179,9 @@ public class UI {
 				System.out.print("Enter Target vertex: ");
 				String target = scanner.nextLine().trim();
 				try {
-					utils.dijkstra(source,target);
-					System.out.printf("[SUCCESS] Dijkstra completed. Shortest path: %s . Total weight: %s\n" + utils.getShortestPath(), utils.getTotalWeight());
+					utils.dijkstra(source, target);
+					System.out.printf("[SUCCESS] Dijkstra chạy thành công. Shortest path: %s. Tổng weight: %s\n",
+							utils.getShortestPath(), utils.getTotalWeight());
 				} catch (Exception e) {
 					System.out.println("[ERROR] " + e.getMessage());
 				}
@@ -192,38 +192,38 @@ public class UI {
 				System.out.print("Enter Sink/Target vertex: ");
 				String st = scanner.nextLine().trim();
 				try {
-					utils.fordFulkerson(s,st);
+					utils.fordFulkerson(s, st);
 					utils.dijkstra(s, st);
 					System.out.println("[SUCCESS] Both algorithms executed successfully.");
 				} catch (Exception e) {
 					System.out.println("[ERROR] " + e.getMessage());
 				}
-				break;
 			}
 			case "0" -> {
 				return;
 			}
 			default -> {
-				System.out.println("Input khong hop le");
+				System.out.println("[ERROR} Input không hợp lệ!");
 			}
 			}
 		}
 	}
+
 	public static void menu4() {
 		while (true) {
 			System.out.printf("""
 					+================================================================+
-					|                     KET QUA / KIEM CHUNG                       |
+					|                     KẾT QUẢ / KIỂM CHỨNG                       |
 					+================================================================+
 					| Dataset : %-52s |
 					|                                                                |
-					| [1] Xem Max Flow va flow tren cung goc                         |
+					| [1] Xem Max Flow và flow trên cung gốc                         |
 					| [2] Xem Residual Graph / augmenting paths / bottleneck         |
 					| [3] Xem Dijkstra: Distance/Predecessor, Path/Total Cost        |
-					| [4] Verify Flow va phan tich tong hop hai bai toan             |
-					| [0] Quay lai Main Menu                                         |
+					| [4] Verify Flow và phân tích tổng hợp hai bài toán             |
+					| [0] Quay lại Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang:""", utils.getDatasetName());
+					Chọn chức năng: """, utils.getDatasetName());
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
@@ -238,41 +238,41 @@ public class UI {
 			case "4" -> {
 				utils.verifyFlowAndExamine();
 			}
-			
 			case "0" -> {
 				return;
 			}
 			default -> {
-				System.out.println("Input khong hop le");
+				System.out.println("[ERROR} Input không hợp lệ!");
 			}
 			}
 		}
 	}
+
 	public static void menu5() {
 		while (true) {
 			System.out.printf("""
 					+================================================================+
-					|                 MENU 5 - KIEM THU / HUONG DAN                  |
+					|                 MENU 5 - KIỂM THỬ / HƯỚNG DẪN                  |
 					+================================================================+
 					| Dataset : %-52s |
 					|                                                                |
-					| [1] Chay mot testcase                                          |
-					| [2] Chay tat ca testcase                                       |
-					| [3] Xem tong hop Pass / Fail                                   |
-					| [4] Dinh dang input / Huong dan thuat toan                     |
-					| [5] Thong tin project / thanh vien                             |
-					| [0] Quay lai Main Menu                                         |
+					| [1] Chạy một testcase                                          |
+					| [2] Chạy tất cả testcase                                       |
+					| [3] Xem tổng hợp Pass / Fail                                   |
+					| [4] Định dạng input / Hướng dẫn thuật toán                     |
+					| [5] Thông tin project / thành viên                             |
+					| [0] Quay lại Main Menu                                         |
 					+----------------------------------------------------------------+
-					Chon chuc nang [0-5]: """, utils.getDatasetName());
+					Chọn chức năng [0-5]: """, utils.getDatasetName());
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("Nhap ten test case:");
+				System.out.println("Nhập tên test case:");
 				String path = scanner.nextLine().trim();
 				try {
 					utils.runTestCase(path);
-				}catch (Exception e) {
-					System.out.println("[ERROR] "+ e.getMessage());
+				} catch (Exception e) {
+					System.out.println("[ERROR] " + e.getMessage());
 				}
 			}
 			case "2" -> {
@@ -291,7 +291,7 @@ public class UI {
 				return;
 			}
 			default -> {
-				System.out.println("Input khong hop le");
+				System.out.println("[ERROR} Input không hợp lệ!");
 			}
 			}
 		}
