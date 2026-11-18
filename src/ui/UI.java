@@ -97,7 +97,7 @@ public class UI {
 			}
 			case "3" -> {
 				System.out.println("[3] Chọn dataset mẫu / kiểm thử ");
-				chooseDatzasetAndDebug();
+				chooseDatasetAndDebug();
 			}
 			case "4" -> {
 				while (true) {
