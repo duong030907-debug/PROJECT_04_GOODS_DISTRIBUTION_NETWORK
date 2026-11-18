@@ -1,30 +1,46 @@
 # java
 
-## Phần của Lưu Long Hải
+## Lưu Long Hải
 
 \[] model
 
+&#x09;\[] Edge
+
+&#x09;\[] Graph
+
 \[] algorithm
 
+&#x09;\[] Dijktra
+
+&#x09;\[] Ford Fulkerson
 
 
-Phần của Phạm Hoàng Dương
+
+## Phạm Hoàng Dương
 
 \[X] ui
 
 \[] utils
 
-&#x09;\[] Menu 1: thiếu
+&#x09;\[X] Menu 1: 
 
-&#x09;\[] Menu 2
+&#x09;\[X] Menu 2:
 
-&#x09;\[] Menu 3
+&#x09;\[X] Menu 3:
 
-&#x09;\[] Menu 4
+&#x09;\[] Menu 4:
+
+&#x09;\[] Menu 5:
+
+
 
 \[X] io
 
 \[] testing
+
+&#x09;\[] Tạo class con Test
+
+&#x09;\[] run() and runAll()
 
 # docx
 
