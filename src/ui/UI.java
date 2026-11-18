@@ -101,7 +101,7 @@ public class UI {
 			}
 			case "3" -> {
 				System.out.println("[2] Chon dataset mau / kiem thu ");
-				utils.chooseDatasetAndDebug();
+				chooseDatasetAndDebug();
 				continue;
 			}
 			case "4" -> {
@@ -141,6 +141,11 @@ public class UI {
 		}
 	}
 
+	private static void chooseDatasetAndDebug() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public static void menu3() {
 		while (true) {
 			System.out.printf("""
@@ -176,7 +181,7 @@ public class UI {
 				String target = scanner.nextLine().trim();
 				try {
 					utils.dijkstra(source,target);
-					System.out.println("[SUCCESS] Dijkstra completed. Shortest path: %s . Total weight:" + utils.getShortestPath(), utils.getTotalWeight());
+					System.out.printf("[SUCCESS] Dijkstra completed. Shortest path: %s . Total weight: %s\n" + utils.getShortestPath(), utils.getTotalWeight());
 				} catch (Exception e) {
 					System.out.println("[ERROR] " + e.getMessage());
 				}
@@ -194,6 +199,93 @@ public class UI {
 					System.out.println("[ERROR] " + e.getMessage());
 				}
 				break;
+			}
+			case "0" -> {
+				return;
+			}
+			default -> {
+				System.out.println("Input khong hop le");
+			}
+			}
+		}
+	}
+	public static void menu4() {
+		while (true) {
+			System.out.printf("""
+					+================================================================+
+					|                     KET QUA / KIEM CHUNG                       |
+					+================================================================+
+					| Dataset : %-52s |
+					|                                                                |
+					| [1] Xem Max Flow va flow tren cung goc                         |
+					| [2] Xem Residual Graph / augmenting paths / bottleneck         |
+					| [3] Xem Dijkstra: Distance/Predecessor, Path/Total Cost        |
+					| [4] Verify Flow va phan tich tong hop hai bai toan             |
+					| [0] Quay lai Main Menu                                         |
+					+----------------------------------------------------------------+
+					Chon chuc nang:""", utils.getDatasetName());
+			String i = scanner.nextLine().trim();
+			switch (i) {
+			case "1" -> {
+				utils.getMaxFlowAndTopFlow();
+			}
+			case "2" -> {
+				utils.displayResidualGraph();
+			}
+			case "3" -> {
+				utils.xemDjaktra();
+			}
+			case "4" -> {
+				utils.verifyFlowAndExamine();
+			}
+			
+			case "0" -> {
+				return;
+			}
+			default -> {
+				System.out.println("Input khong hop le");
+			}
+			}
+		}
+	}
+	public static void menu5() {
+		while (true) {
+			System.out.printf("""
+					+================================================================+
+					|                 MENU 5 - KIEM THU / HUONG DAN                  |
+					+================================================================+
+					| Dataset : %-52s |
+					|                                                                |
+					| [1] Chay mot testcase                                          |
+					| [2] Chay tat ca testcase                                       |
+					| [3] Xem tong hop Pass / Fail                                   |
+					| [4] Dinh dang input / Huong dan thuat toan                     |
+					| [5] Thong tin project / thanh vien                             |
+					| [0] Quay lai Main Menu                                         |
+					+----------------------------------------------------------------+
+					Chon chuc nang [0-5]: """, utils.getDatasetName());
+			String i = scanner.nextLine().trim();
+			switch (i) {
+			case "1" -> {
+				System.out.println("Nhap ten test case:");
+				String path = scanner.nextLine().trim();
+				try {
+					utils.runTestCase(path);
+				}catch (Exception e) {
+					System.out.println("[ERROR] "+ e.getMessage());
+				}
+			}
+			case "2" -> {
+				utils.runTestAllCase();
+			}
+			case "3" -> {
+				utils.displayPassFail();
+			}
+			case "4" -> {
+				utils.configAndHelper();
+			}
+			case "5" -> {
+				utils.displayProjectInfo();
 			}
 			case "0" -> {
 				return;
