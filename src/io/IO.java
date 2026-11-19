@@ -43,6 +43,7 @@ public class IO {
                     graph.addEdge(u, v, cap, weight);
                 }
             }
+			graph.setGraphName(file.getName());
 			graph.setGraphValid(true);
 			return graph;
 		}catch (Exception e) {

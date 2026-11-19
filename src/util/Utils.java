@@ -2,6 +2,7 @@ package util;
 
 import algorithm.Dijaktra;
 import algorithm.FordFulkerson;
+import io.IO;
 import model.Graph;
 import testing.TestRunner;
 
@@ -10,7 +11,7 @@ public class Utils {
 	private FordFulkerson ff = new FordFulkerson();
 	private Dijaktra dij = new Dijaktra();
 	private TestRunner testRunner = new TestRunner();
-	private io.IO io;
+	private IO io = new IO();
 	// Graph
 	public String getDatasetName() {
 		return graph.getGraphName();
@@ -40,6 +41,8 @@ public class Utils {
 
 	public boolean setData(String path) {
 		graph = io.loadFromFile(path);
+		ff = new FordFulkerson();
+		dij = new Dijaktra();
 		return graph.isGraphValid();
 	}
 
@@ -51,11 +54,21 @@ public class Utils {
 	// [4] Reload hoac Clear dataset hien tai
 
 	public boolean reloadDataset() {
-		return graph.reload();
+		boolean ok = graph.reload();
+		if (ok) {
+			ff = new FordFulkerson();
+			dij = new Dijaktra();
+		}
+		return ok;
 	}
 
 	public boolean clearDataset() {
-		return graph.clear();
+		boolean ok = graph.clear();
+		if (ok) {
+			ff = new FordFulkerson();
+			dij = new Dijaktra();
+		}
+		return ok;
 	}
 
 	// menu 3
@@ -87,22 +100,31 @@ public class Utils {
 	// menu 4
 	
 	public void getMaxFlowAndTopFlow() {
-		
+		ff.displayMaxFlowAndArcs();
 	}
 
 	public void displayResidualGraph() {
-		// TODO Auto-generated method stub
-		
+		ff.displayResidualAndPaths();
 	}
 
 	public void xemDjaktra() {
-		// TODO Auto-generated method stub
-		
+		dij.displayResult();
 	}
 
 	public void verifyFlowAndExamine() {
-		// TODO Auto-generated method stub
-		
+		ff.displayVerification();
+		System.out.println("+================================================================+");
+		System.out.println("|              PHÂN TÍCH TỔNG HỢP HAI BÀI TOÁN                   |");
+		System.out.println("+================================================================+");
+		System.out.println("Dataset       : " + getDatasetName());
+		System.out.println("Maximum Flow  : " + ff.getMaxFlow() + " units/time (dựa trên capacity)");
+		System.out.println("Shortest Path : " + dij.getShortestPath() + " | Total Cost: " + dij.getTotalWeight() + " (dựa trên weight)");
+		System.out.println("GHI CHÚ:");
+		System.out.println("- Ford-Fulkerson tối đa hóa lưu lượng trên Residual Graph mới.");
+		System.out.println("- Dijkstra tối thiểu hóa chi phí đường đi trên Graph gốc (capacity > 0).");
+		System.out.println("- Tuyến đường ngắn nhất không đồng nhất với tuyến tạo luồng cực đại.");
+		System.out.println("- Hai kết quả trả lời hai câu hỏi quản lý hoàn toàn khác nhau.");
+		System.out.println("+----------------------------------------------------------------+");
 	}
 	// menu 5
 	public void runTestCase(String path) {
