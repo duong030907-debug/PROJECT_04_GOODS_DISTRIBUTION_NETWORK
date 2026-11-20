@@ -22,7 +22,7 @@ public class TestRunner {
 
 		runTest("TC01", "Max flow normal / multiple paths", "ds_demo.txt", "WH", "ST", "WH", "ST", true);
 		runTest("TC02", "Reverse residual update", "ds_rev.txt", "S", "T", "S", "T", true);
-		runTest("TC03", "Source-Sink disconnected -> flow 0", "ds_flow0.txt", "S", "T", "S", "T", true);
+		runTest("TC03", "Source-Sink disconnected -> flow 0", "ds_flow0.txt", "S", "T", "S", "T", false);
 		runTest("TC04", "Zero-capacity arc ignored", "ds_zero.txt", "S", "T", "S", "T", true);
 		runTest("TC05", "Dijkstra shortest path", "ds_main.txt", "WH", "ST", "WH", "ST", true);
 		runTest("TC06", "Dijkstra NO PATH", "ds_nopath.txt", "S", "T", "S", "T", false);
@@ -36,11 +36,9 @@ public class TestRunner {
 
 	public static void runTest1(String testName) {
 		switch (testName) {
-		case "1", "TC01" ->
-			runTest("TC01", "Max flow normal / multiple paths", "ds_demo.txt", "WH", "ST", "WH", "ST", true);
+		case "1", "TC01" -> runTest("TC01", "Max flow normal / multiple paths", "ds_demo.txt", "WH", "ST", "WH", "ST", true);
 		case "2", "TC02" -> runTest("TC02", "Reverse residual update", "ds_rev.txt", "S", "T", "S", "T", true);
-		case "3", "TC03" ->
-			runTest("TC03", "Source-Sink disconnected -> flow 0", "ds_flow0.txt", "S", "T", "S", "T", false);
+		case "3", "TC03" -> runTest("TC03", "Source-Sink disconnected -> flow 0", "ds_flow0.txt", "S", "T", "S", "T", false);
 		case "4", "TC04" -> runTest("TC04", "Zero-capacity arc ignored", "ds_zero.txt", "S", "T", "S", "T", true);
 		case "5", "TC05" -> runTest("TC05", "Dijkstra shortest path", "ds_main.txt", "WH", "ST", "WH", "ST", true);
 		case "6", "TC06" -> runTest("TC06", "Dijkstra NO PATH", "ds_nopath.txt", "S", "T", "S", "T", false);

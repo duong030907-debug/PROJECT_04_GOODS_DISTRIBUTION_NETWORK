@@ -323,7 +323,7 @@ public class UI {
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				while(true) {
+				while (true) {
 					System.out.printf("""
 							+================================================================+
 							|                          CHỌN TESTCASE                         |
@@ -345,13 +345,11 @@ public class UI {
 							| [0]  Quay lại                                                  |
 							+----------------------------------------------------------------+
 							Chọn testcase [0-12]: """, utils.getDatasetName());
-						if(!scanner.hasNextInt()) {
-							System.out.println("[ERROR} Input không hợp lệ!");
-							continue;
-						}
-						String j = scanner.nextLine().trim();
-						if(j.equals("0")) return;
-						utils.runTestCase(i);
+					String j = scanner.nextLine().trim();
+					if (j.equals("0")) {
+						break;
+					}
+					utils.runTestCase(j);
 				}
 			}
 			case "2" -> {
