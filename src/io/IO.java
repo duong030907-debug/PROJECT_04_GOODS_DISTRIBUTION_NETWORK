@@ -38,7 +38,7 @@ public class IO {
                     int weight = Integer.parseInt(parts[3]);
 
                     if (cap < 0 || weight < 0) {
-                        throw new IllegalArgumentException("Capacity and weight must be non-negative.");
+                        throw new IllegalArgumentException("Capacity và weight phải không âm.");
                     }
                     graph.addEdge(u, v, cap, weight);
                 }

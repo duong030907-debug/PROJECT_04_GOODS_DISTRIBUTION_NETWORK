@@ -143,6 +143,19 @@ public class UI {
 	}
 
 	private static void chooseDatasetAndDebug() {
+		String[] files = {
+				"ds_demo.txt",
+				"ds_rev.txt",
+				"ds_flow0.txt",
+				"ds_zero.txt",
+				"ds_main.txt",
+				"ds_nopath.txt",
+				"ds_invalid.txt",
+				"ds_single.txt",
+				"ds_zero_mid.txt",
+				"ds_dup.txt",
+				"ds_neg_w.txt"
+		};
 		while (true) {
 			System.out.printf("""
 					+================================================================+
@@ -150,30 +163,38 @@ public class UI {
 					+================================================================+
 					| Dataset : %-52s |
 					|                                                                |
-					| [1] ds_demo.txt    (TC01 Max flow bình thường)                 |
-					| [2] ds_rev.txt     (TC02 Residual reverse update)              |
-					| [3] ds_flow0.txt   (TC03 Source không tới Sink)                |
-					| [4] ds_zero.txt    (TC04 Capacity = 0)                         |
-					| [5] ds_main.txt    (TC05 Dataset chính: Dijkstra shortest path)|
-					| [6] ds_nopath.txt  (TC06 Dijkstra NO PATH)                     |
-					| [7] ds_invalid.txt (TC07 Dữ liệu sai quy ước)                  |
-					| [0] Quay lại                                                   |
+					| [1]  ds_demo.txt     (TC01 Max flow bình thường)                |
+					| [2]  ds_rev.txt      (TC02 Residual reverse update)             |
+					| [3]  ds_flow0.txt    (TC03 Source không tới Sink)               |
+					| [4]  ds_zero.txt     (TC04 Capacity = 0)                        |
+					| [5]  ds_main.txt     (TC05 Dataset chính: Dijkstra shortest)    |
+					| [6]  ds_nopath.txt   (TC06 Dijkstra NO PATH)                    |
+					| [7]  ds_invalid.txt  (TC07 Dữ liệu sai quy ước)                 |
+					| [8]  ds_single.txt   (TC08 Đồ thị một cung S->T)                |
+					| [9]  ds_zero_mid.txt (TC09 Chuỗi có cung capacity 0 ở giữa)     |
+					| [10] ds_dup.txt      (TC11 Cung trùng S->A)                     |
+					| [11] ds_neg_w.txt    (TC12 Weight âm S->A)                      |
+					| [0]  Quay lại                                                  |
 					+----------------------------------------------------------------+
 					Chọn chức năng: """, utils.getDatasetName());
-			if(!scanner.hasNextInt()) {
-				System.out.println("[ERROR} Input không hợp lệ!");
-				continue;
-			}
 			String i = scanner.nextLine().trim();
-			if(i.equals("0")) return;
-			String[] s = {"ds_demo.txt",
-			              "ds_rev.txt",
-			              "ds_flow0.txt",
-			              "ds_zero.txt",
-			              "ds_main.txt",
-			              "ds_nopath.txt",
-			              "ds_invalid.txt"};
-			utils.setData(s[Integer.parseInt(i) -1]);
+			if (i.equals("0")) {
+				return;
+			}
+			try {
+				int idx = Integer.parseInt(i) - 1;
+				if (idx < 0 || idx >= files.length) {
+					System.out.println("[ERROR] Input không hợp lệ!");
+					continue;
+				}
+				if (utils.setData(files[idx])) {
+					System.out.println("[INFO] Đã nạp dataset: " + files[idx]);
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("[ERROR] Input không hợp lệ!");
+			} catch (Exception e) {
+				System.out.println("[ERROR] " + e.getMessage());
+			}
 		}
 	}
 
@@ -199,6 +220,7 @@ public class UI {
 				System.out.print("Enter Sink vertex: ");
 				String sink = scanner.nextLine().trim();
 				try {
+					validateMaxFlowEndpoints(source, sink);
 					utils.fordFulkerson(source, sink);
 					System.out.println("[SUCCESS] Ford-Fulkerson chạy thành công. Max Flow = " + utils.getMaxFlow());
 				} catch (Exception e) {
@@ -211,6 +233,7 @@ public class UI {
 				System.out.print("Enter Target vertex: ");
 				String target = scanner.nextLine().trim();
 				try {
+					validateMaxFlowEndpoints(source, target);
 					utils.dijkstra(source, target);
 					System.out.printf("[SUCCESS] Dijkstra chạy thành công. Shortest path: %s. Tổng weight: %s\n",
 							utils.getShortestPath(), utils.getTotalWeight());
@@ -224,6 +247,7 @@ public class UI {
 				System.out.print("Enter Sink/Target vertex: ");
 				String st = scanner.nextLine().trim();
 				try {
+					validateMaxFlowEndpoints(s, st);
 					utils.fordFulkerson(s, st);
 					utils.dijkstra(s, st);
 					System.out.println("[SUCCESS] Both algorithms executed successfully.");
@@ -306,16 +330,21 @@ public class UI {
 							+================================================================+
 							| Dataset : %-52s |
 							|                                                                |
-							| [1] ds_demo.txt    (TC01 Max flow bình thường)                 |
-							| [2] ds_rev.txt     (TC02 Residual reverse update)              |
-							| [3] ds_flow0.txt   (TC03 Source không tới Sink)                |
-							| [4] ds_zero.txt    (TC04 Capacity = 0)                         |
-							| [5] ds_main.txt    (TC05 Dataset chính: Dijkstra shortest path)|
-							| [6] ds_nopath.txt  (TC06 Dijkstra NO PATH)                     |
-							| [7] ds_invalid.txt (TC07 Dữ liệu sai quy ước)                  |
-							| [0] Quay lại                                                   |
+							| [1]  TC01 - ds_demo.txt     (Max flow bình thường)             |
+							| [2]  TC02 - ds_rev.txt      (Residual reverse update)          |
+							| [3]  TC03 - ds_flow0.txt    (Source không tới Sink)            |
+							| [4]  TC04 - ds_zero.txt     (Capacity = 0)                     |
+							| [5]  TC05 - ds_main.txt     (Dataset chính: Dijkstra shortest) |
+							| [6]  TC06 - ds_nopath.txt   (Dijkstra NO PATH)                 |
+							| [7]  TC07 - ds_invalid.txt  (Dữ liệu sai quy ước)              |
+							| [8]  TC08 - ds_single.txt   (Đồ thị một cung S->T)             |
+							| [9]  TC09 - ds_zero_mid.txt (Chuỗi có cung capacity 0 ở giữa)  |
+							| [10] TC10 - Source == Sink  (Kiểm tra tầng giao diện UI)       |
+							| [11] TC11 - ds_dup.txt      (Cung trùng S->A)                  |
+							| [12] TC12 - ds_neg_w.txt    (Weight âm & INVALID FOR DIJKSTRA) |
+							| [0]  Quay lại                                                  |
 							+----------------------------------------------------------------+
-								""",utils.getDatasetName());
+							Chọn testcase [0-12]: """, utils.getDatasetName());
 						if(!scanner.hasNextInt()) {
 							System.out.println("[ERROR} Input không hợp lệ!");
 							continue;
@@ -345,5 +374,13 @@ public class UI {
 			}
 			}
 		}
+	}
+	public static void validateMaxFlowEndpoints(String source, String sink) {
+	    if (source == null || sink == null || source.isEmpty() || sink.isEmpty()) {
+	        throw new IllegalArgumentException("INVALID INPUT: Source và Sink không được để trống.");
+	    }
+	    if (source.equals(sink)) {
+	        throw new IllegalArgumentException("INVALID INPUT: Source và Sink không được trùng nhau (" + source + ").");
+	    }
 	}
 }

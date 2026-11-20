@@ -1,0 +1,2 @@
+# TC12 - Negative Weight Edge
+S A 5 -1

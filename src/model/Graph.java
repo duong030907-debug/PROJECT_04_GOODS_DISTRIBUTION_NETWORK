@@ -61,7 +61,7 @@ public class Graph {
 
 		for (Edge e : adjList.get(u)) {
 			if (e.getV().equals(v)) {
-				throw new IllegalArgumentException("Cung trùng tại " + u + " -> " + v);
+				throw new IllegalArgumentException("Cung trung tai " + u + " and " + v);
 			}
 		}
 

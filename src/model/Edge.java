@@ -57,7 +57,7 @@ public class Edge {
 
 	@Override
 	public String toString() {
-		return u + " -> " + v + " : cap=" + capacity + ", weight=" + weight + ", flow=" + flow;
+		return u + " -> " + v + " (cap=" + capacity + ", w=" + weight + ")";
 	}
 
 }

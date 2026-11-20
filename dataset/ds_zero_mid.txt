@@ -1,0 +1,4 @@
+# TC09 - Chain with Zero-Capacity Edge in Middle (Max Flow = 0, Dijkstra S->A ok, B & T NO PATH)
+S A 5 1
+A B 0 1
+B T 5 1

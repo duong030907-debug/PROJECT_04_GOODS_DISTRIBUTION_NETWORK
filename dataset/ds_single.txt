@@ -1,0 +1,2 @@
+# TC08 - Single Edge Graph (Max Flow = 7, Dijkstra S -> T cost = 2)
+S T 7 2
