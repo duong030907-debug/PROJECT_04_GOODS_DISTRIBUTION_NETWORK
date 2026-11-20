@@ -173,7 +173,7 @@ public class UI {
 			              "ds_main.txt",
 			              "ds_nopath.txt",
 			              "ds_invalid.txt"};
-			utils.setData(s[Integer.parseInt(i)]);
+			utils.setData(s[Integer.parseInt(i) -1]);
 		}
 	}
 
