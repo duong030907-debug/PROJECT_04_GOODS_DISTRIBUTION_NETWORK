@@ -115,7 +115,8 @@ public class UI {
 					String j = scanner.nextLine().trim();
 					switch (j) {
 					case "1" -> {
-						System.out.println(utils.reloadDataset() ? "[INFO] Reload thành công" : "[INFO] Reload thất bại");
+						System.out
+								.println(utils.reloadDataset() ? "[INFO] Reload thành công" : "[INFO] Reload thất bại");
 					}
 					case "2" -> {
 						System.out.println(utils.clearDataset() ? "[INFO] Clear thành công" : "[INFO] Clear thất bại");
@@ -142,7 +143,38 @@ public class UI {
 	}
 
 	private static void chooseDatasetAndDebug() {
-		System.out.println("[INFO] Chức năng chọn dataset mẫu đang được phát triển.");
+		while (true) {
+			System.out.printf("""
+					+================================================================+
+					|                          CHỌN DATASET                          |
+					+================================================================+
+					| Dataset : %-52s |
+					|                                                                |
+					| [1] ds_demo.txt    (TC01 Max flow bình thường)                 |
+					| [2] ds_rev.txt     (TC02 Residual reverse update)              |
+					| [3] ds_flow0.txt   (TC03 Source không tới Sink)                |
+					| [4] ds_zero.txt    (TC04 Capacity = 0)                         |
+					| [5] ds_main.txt    (TC05 Dataset chính: Dijkstra shortest path)|
+					| [6] ds_nopath.txt  (TC06 Dijkstra NO PATH)                     |
+					| [7] ds_invalid.txt (TC07 Dữ liệu sai quy ước)                  |
+					| [0] Quay lại                                                   |
+					+----------------------------------------------------------------+
+					Chọn chức năng: """, utils.getDatasetName());
+			if(!scanner.hasNextInt()) {
+				System.out.println("[ERROR} Input không hợp lệ!");
+				continue;
+			}
+			String i = scanner.nextLine().trim();
+			if(i.equals("0")) return;
+			String[] s = {"ds_demo.txt",
+			              "ds_rev.txt",
+			              "ds_flow0.txt",
+			              "ds_zero.txt",
+			              "ds_main.txt",
+			              "ds_nopath.txt",
+			              "ds_invalid.txt"};
+			utils.setData(s[Integer.parseInt(i)]);
+		}
 	}
 
 	public static void menu3() {
@@ -267,12 +299,30 @@ public class UI {
 			String i = scanner.nextLine().trim();
 			switch (i) {
 			case "1" -> {
-				System.out.println("Nhập tên test case:");
-				String path = scanner.nextLine().trim();
-				try {
-					utils.runTestCase(path);
-				} catch (Exception e) {
-					System.out.println("[ERROR] " + e.getMessage());
+				while(true) {
+					System.out.printf("""
+							+================================================================+
+							|                          CHỌN TESTCASE                         |
+							+================================================================+
+							| Dataset : %-52s |
+							|                                                                |
+							| [1] ds_demo.txt    (TC01 Max flow bình thường)                 |
+							| [2] ds_rev.txt     (TC02 Residual reverse update)              |
+							| [3] ds_flow0.txt   (TC03 Source không tới Sink)                |
+							| [4] ds_zero.txt    (TC04 Capacity = 0)                         |
+							| [5] ds_main.txt    (TC05 Dataset chính: Dijkstra shortest path)|
+							| [6] ds_nopath.txt  (TC06 Dijkstra NO PATH)                     |
+							| [7] ds_invalid.txt (TC07 Dữ liệu sai quy ước)                  |
+							| [0] Quay lại                                                   |
+							+----------------------------------------------------------------+
+								""",utils.getDatasetName());
+						if(!scanner.hasNextInt()) {
+							System.out.println("[ERROR} Input không hợp lệ!");
+							continue;
+						}
+						String j = scanner.nextLine().trim();
+						if(j.equals("0")) return;
+						utils.runTestCase(i);
 				}
 			}
 			case "2" -> {

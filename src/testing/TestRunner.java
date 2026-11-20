@@ -94,5 +94,5 @@ public class TestRunner {
 		return testResults;
 	}
 
->>>>>>> Stashed changes
+
 }

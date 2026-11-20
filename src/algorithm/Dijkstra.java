@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import model.Edge;
 import model.Graph;
 
-public class Dijaktra {
+public class Dijkstra {
 	private Graph graph;
 	private String source;
 	private String target;
@@ -28,6 +28,13 @@ public class Dijaktra {
 			this.node = node;
 			this.distance = distance;
 		}
+	}
+
+	public Dijkstra(Graph g) {
+		this.graph = g;
+	}
+
+	public Dijkstra() {
 	}
 
 	public void setGraph(Graph graph) {

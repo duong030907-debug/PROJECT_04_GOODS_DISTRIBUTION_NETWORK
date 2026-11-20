@@ -39,6 +39,14 @@ public class FordFulkerson {
 		}
 	}
 
+	public FordFulkerson(Graph g) {
+		this.originalGraph = g;
+	}
+
+	public FordFulkerson() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void setGraph(Graph graph) {
 		this.originalGraph = graph;
 	}
@@ -185,8 +193,8 @@ public class FordFulkerson {
 		return outflow.get(source) == maxFlow && inflow.get(sink) == maxFlow;
 	}
 
-	public String getMaxFlow() {
-		return String.valueOf(maxFlow);
+	public int getMaxFlow() {
+		return maxFlow;
 	}
 
 	public int getMaxFlowValue() {
@@ -271,5 +279,9 @@ public class FordFulkerson {
 		System.out.println("Status                             : " + (valid ? "FLOW VALID" : "FLOW INVALID"));
 		System.out.println("Note: residual reverse arcs are algorithmic, not physical routes.");
 		System.out.println("+----------------------------------------------------------------+");
+	}
+
+	public boolean verifyFlow() {
+		return verifyFlow(source,sink);
 	}
 }

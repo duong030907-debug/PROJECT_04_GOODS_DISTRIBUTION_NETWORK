@@ -1,15 +1,15 @@
 package util;
 
-import algorithm.Dijaktra;
+import algorithm.Dijkstra;
 import algorithm.FordFulkerson;
 import io.IO;
 import model.Graph;
 import testing.TestRunner;
 
 public class Utils {
-	Graph graph = new Graph();
+	private static Graph graph = new Graph();
 	private FordFulkerson ff = new FordFulkerson();
-	private Dijaktra dij = new Dijaktra();
+	private Dijkstra dij = new Dijkstra();
 	private TestRunner testRunner = new TestRunner();
 	private IO io = new IO();
 	// Graph
@@ -41,8 +41,10 @@ public class Utils {
 
 	public boolean setData(String path) {
 		graph = io.loadFromFile(path);
+
 		ff = new FordFulkerson();
-		dij = new Dijaktra();
+		dij = new Dijkstra();
+
 		return graph.isGraphValid();
 	}
 
@@ -53,22 +55,14 @@ public class Utils {
 	
 	// [4] Reload hoac Clear dataset hien tai
 
-	public boolean reloadDataset() {
-		boolean ok = graph.reload();
-		if (ok) {
-			ff = new FordFulkerson();
-			dij = new Dijaktra();
-		}
-		return ok;
-	}
-
 	public boolean clearDataset() {
 		boolean ok = graph.clear();
 		if (ok) {
 			ff = new FordFulkerson();
-			dij = new Dijaktra();
+			dij = new Dijkstra();
 		}
 		return ok;
+
 	}
 
 	// menu 3
@@ -84,7 +78,7 @@ public class Utils {
 	
 	// Ford Fulkerson
 
-	public String getMaxFlow() {
+	public int getMaxFlow() {
 		return ff.getMaxFlow();
 	}
 
@@ -128,16 +122,15 @@ public class Utils {
 	}
 	// menu 5
 	public void runTestCase(String path) {
-		testRunner.run(path);
+		TestRunner.runTest1(path);
 	}
 
 	public void runTestAllCase() {
-		// TODO Auto-generated method stub
-		testRunner.runAll();
+		TestRunner.runAllTests();
 	}
 
 	public void displayPassFail() {
-		testRunner.displayPassFail();
+		System.out.println(testRunner.getTestResults());
 	}
 
 	public void configAndHelper() {
@@ -182,6 +175,14 @@ public class Utils {
 	            |   - Source code Java chạy hoàn chỉnh trên Eclipse              |
 	            |   - Video demo                                                 |
 	            +----------------------------------------------------------------+""");
+	}
+
+	public boolean verifyFlow() {
+		return ff.verifyFlow();
+	}
+
+	public boolean reloadDataset() {
+		return graph.reload();
 	}
 
 

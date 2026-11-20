@@ -47,8 +47,7 @@ public class IO {
 			graph.setGraphValid(true);
 			return graph;
 		}catch (Exception e) {
-			System.out.println("[ERROR] loadFromFile failure: " + e.getMessage());
-			return graph;
+			throw new IllegalArgumentException(("[ERROR] loadFromFile failure: " + e.getMessage()));
 		}
 	}
 }
